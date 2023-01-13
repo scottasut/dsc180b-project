@@ -3,7 +3,6 @@ import json
 import praw
 import kaggle
 import queue
-import re
 
 def prepare():
     if not os.path.exists('../../data'):
