@@ -4,6 +4,13 @@ import praw
 import kaggle
 import queue
 
+KAGGLE_DATA_PATH_REMOTE = 'timschaum/subreddit-recommender'
+KAGGLE_DATA_PATH_LOCAL = '../../data/raw/reddit_user_data_count.csv'
+USERS_DATA_PATH = '../../data/raw/users.csv'
+COMMENTS_DATA_PATH = '../../data/raw/comments.csv'
+USERS_COMMENTS_DATA_PATH = '../../data/raw/users_comments.csv'
+COMMENTS_COMMENTS_DATA_PATH = '../../data/raw/comments_comments.csv'
+
 def prepare():
     if not os.path.exists('../../data'):
         os.mkdir('../../data')
@@ -14,11 +21,14 @@ def prepare():
 def download_kaggle():
     # Downloading Kaggle data. Requires Kaggle API config--please refer to README
     kaggle.api.authenticate()
-    kaggle.api.dataset_download_files('timschaum/subreddit-recommender', '../../data/raw', unzip=True)
+    kaggle.api.dataset_download_files(KAGGLE_DATA_PATH_REMOTE, '../../data/raw', unzip=True)
 
 def get_nodes_set():
+    if not os.path.exists(KAGGLE_DATA_PATH_LOCAL):
+        raise FileNotFoundError('File \'{}\' must exist. Call download_kaggle() first.'.format(KAGGLE_DATA_PATH_LOCAL))
+
     users, subreddits = set(), set()
-    with open('../../data/raw/reddit_user_data_count.csv', 'r') as f:
+    with open(KAGGLE_DATA_PATH_LOCAL, 'r') as f:
         for l in f.readlines():
             if l.startswith('user,subreddit,count'):
                 continue
@@ -27,7 +37,7 @@ def get_nodes_set():
             subreddits.add(subreddit)
     return sorted(list(users)), sorted(list(subreddits))
 
-def download_reddit():
+def download_reddit(num_users=100):
     with open('../../configs/config.json') as f:
         config = json.load(f)
 
@@ -43,13 +53,27 @@ def download_reddit():
         return list(reddit.redditor(user).comments.new(limit=10))
     
     users, subreddits = get_nodes_set()
-    users = users[:50]
+    downloaded_users = set()
+    download_count = 0
 
-    with open('../../data/raw/comments.csv', 'w') as cf:
-        with open('../../data/raw/users.csv', 'w') as uf:
-            with open('../../data/raw/users_comments.csv', 'w') as ucf:
-                with open('../../data/raw/comments_comments.csv', 'w') as ccf:
+    if os.path.exists(USERS_DATA_PATH):
+        with open(USERS_DATA_PATH, 'r') as f:
+            for l in f.readlines():
+                downloaded_users.add(l.split()[0])
+
+    with open(COMMENTS_DATA_PATH, 'w') as cf:
+        with open(USERS_DATA_PATH, 'a') as uf:
+            with open(USERS_COMMENTS_DATA_PATH, 'w') as ucf:
+                with open(COMMENTS_COMMENTS_DATA_PATH, 'w') as ccf:
                     for user in users:
+
+                        if download_count == num_users:
+                            break
+
+                        # Skipping users we have previously read
+                        if user in downloaded_users:
+                            continue
+
                         try:
                             comments = get_comments_from_user(user)
                         except:
@@ -59,10 +83,6 @@ def download_reddit():
 
                         for comment in comments:
 
-                            # if comment.subreddit.name not in subreddits:
-                            #     print('skipped')
-                            #     continue
-
                             ucf.write('{},{}\n'.format(user, comment.id))
 
                             parent = comment
@@ -70,7 +90,9 @@ def download_reddit():
                                 parent = parent.parent()
                             
                             q = queue.Queue()
-                            q.put(parent)
+                            replies = list(comment.replies)
+                            for reply in replies:
+                                q.put(reply)
                             while not q.empty():
                                 comment = q.get()
                                 replies = list(comment.replies)
@@ -82,5 +104,8 @@ def download_reddit():
                                 uf.write('{}\n'.format(comment.author.name))
 
                             cf.write('{},{},{},{}\n'.format(comment.id, comment.created_utc, comment.score, comment.subreddit.display_name))
+                        
+                        download_count += 1
 
 download_reddit()
+
