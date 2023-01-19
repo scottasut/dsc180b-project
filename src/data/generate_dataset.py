@@ -3,6 +3,8 @@ import json
 import praw
 import kaggle
 import queue
+import pandas as pd
+import numpy as np
 
 def prepare():
     if not os.path.exists('../../data'):
@@ -26,6 +28,18 @@ def get_nodes_set():
             users.add(user)
             subreddits.add(subreddit)
     return sorted(list(users)), sorted(list(subreddits))
+
+def split_dataset():
+    users = pd.read_csv('../../data/raw/reddit_user_data_count.csv')
+    unique_users = np.unique(users['user'])
+    index = int(len(unique_users) / 4)
+
+    felicia = unique_users[:index]
+    ryan = unique_users[index:index * 2]
+    scott = unique_users[index * 2:index * 3]
+    pravar = unique_users[index * 3:]
+
+    return felicia, ryan, scott, pravar
 
 def download_reddit():
     with open('../../configs/config.json') as f:
@@ -83,4 +97,3 @@ def download_reddit():
 
                             cf.write('{},{},{},{}\n'.format(comment.id, comment.created_utc, comment.score, comment.subreddit.display_name))
 
-download_reddit()
