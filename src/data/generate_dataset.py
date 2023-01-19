@@ -30,14 +30,13 @@ def get_nodes_set():
     return sorted(list(users)), sorted(list(subreddits))
 
 def split_dataset():
-    users = pd.read_csv('../../data/raw/reddit_user_data_count.csv')
-    unique_users = np.unique(users['user'])
-    index = int(len(unique_users) / 4)
+    users = get_nodes_set()[0]
+    index = int(len(users) / 4)
 
-    felicia = unique_users[:index]
-    ryan = unique_users[index:index * 2]
-    scott = unique_users[index * 2:index * 3]
-    pravar = unique_users[index * 3:]
+    felicia = users[:index]
+    ryan = users[index:index * 2]
+    scott = users[index * 2:index * 3]
+    pravar = users[index * 3:]
 
     return felicia, ryan, scott, pravar
 
@@ -96,4 +95,3 @@ def download_reddit():
                                 uf.write('{}\n'.format(comment.author.name))
 
                             cf.write('{},{},{},{}\n'.format(comment.id, comment.created_utc, comment.score, comment.subreddit.display_name))
-
