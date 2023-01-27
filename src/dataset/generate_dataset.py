@@ -133,6 +133,3 @@ def download_reddit(reddit, num_users=100):
             print("Users downloaded: {}".format(download_count))
 
 prepare()
-download_kaggle()
-reddit = get_reddit()
-download_reddit(reddit, num_users=99)

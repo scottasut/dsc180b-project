@@ -2,6 +2,8 @@
 
 ### Setup:
 
+In order to download the data in an automated fashion, you will need `wget`. If this command is not installed on your system, [here](https://www.jcchouinard.com/wget/#Download_Wget_on_Windows) are instructions on how you can do so.
+
 
 ### Data Generation:
 In order to run this project, you will need two things for the data generation process: A Reddit account and a Kaggle account. If do not have one of these or both you can create them [here](https://www.kaggle.com/account/login?phase=startRegisterTab&returnUrl=%2F) and [here](https://www.reddit.com/register/) respectively. This is crucial in order to use the APIs provided by each of these platforms to procure the data needed for this project.
