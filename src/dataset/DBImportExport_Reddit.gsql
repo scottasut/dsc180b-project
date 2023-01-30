@@ -1,0 +1,53 @@
+CREATE GRAPH Reddit()
+CREATE SCHEMA_CHANGE JOB schema_change_job_AddExportedLocalVETypes_JT8B8XV85X78MVIO FOR GRAPH Reddit { 
+  ADD VERTEX User(PRIMARY_ID name STRING) WITH STATS="OUTDEGREE_BY_EDGETYPE";
+  ADD VERTEX Comment(PRIMARY_ID id STRING, subreddit STRING, created_utc INT, karma INT) WITH STATS="OUTDEGREE_BY_EDGETYPE";
+  ADD VERTEX Subreddit(PRIMARY_ID name STRING) WITH STATS="OUTDEGREE_BY_EDGETYPE";
+  ADD DIRECTED EDGE wrote(FROM User, TO Comment) WITH REVERSE_EDGE="reverse_wrote";
+  ADD DIRECTED EDGE belongs_to(FROM Comment, TO Subreddit) WITH REVERSE_EDGE="reverse_belongs_to";
+  ADD DIRECTED EDGE replied_to(FROM Comment, TO Comment) WITH REVERSE_EDGE="reverse_replied_to";
+}
+RUN SCHEMA_CHANGE JOB schema_change_job_AddExportedLocalVETypes_JT8B8XV85X78MVIO
+DROP JOB schema_change_job_AddExportedLocalVETypes_JT8B8XV85X78MVIO
+set exit_on_error = "false"
+CREATE LOADING JOB file_load_job_9aa991879c FOR GRAPH Reddit {
+      DEFINE FILENAME MyDataSource;
+      LOAD MyDataSource TO EDGE wrote VALUES($0, $1) USING SEPARATOR=",", HEADER="false", EOL="\n";
+    }
+
+set exit_on_error = "true"
+set exit_on_error = "false"
+CREATE LOADING JOB file_load_job_d1f5bb5e5c FOR GRAPH Reddit {
+      DEFINE FILENAME MyDataSource;
+      LOAD MyDataSource TO VERTEX User VALUES($0) USING SEPARATOR=",", HEADER="false", EOL="\n";
+    }
+
+set exit_on_error = "true"
+set exit_on_error = "false"
+CREATE LOADING JOB file_load_job_b03f46f926 FOR GRAPH Reddit {
+      DEFINE FILENAME MyDataSource;
+      LOAD MyDataSource TO EDGE belongs_to VALUES($1, $0) USING SEPARATOR=",", HEADER="false", EOL="\n";
+    }
+
+set exit_on_error = "true"
+set exit_on_error = "false"
+CREATE LOADING JOB file_load_job_5f8f7be82f FOR GRAPH Reddit {
+      DEFINE FILENAME MyDataSource;
+      LOAD MyDataSource TO VERTEX Subreddit VALUES($0) USING SEPARATOR=",", HEADER="false", EOL="\n";
+    }
+
+set exit_on_error = "true"
+set exit_on_error = "false"
+CREATE LOADING JOB file_load_job_ddbf6cc6d2 FOR GRAPH Reddit {
+      DEFINE FILENAME MyDataSource;
+      LOAD MyDataSource TO VERTEX Comment VALUES($0, $1, $2, $3) USING SEPARATOR=",", HEADER="false", EOL="\n";
+    }
+
+set exit_on_error = "true"
+set exit_on_error = "false"
+CREATE LOADING JOB file_load_job_7177673400 FOR GRAPH Reddit {
+      DEFINE FILENAME MyDataSource;
+      LOAD MyDataSource TO EDGE replied_to VALUES($1, $0) USING SEPARATOR=",", HEADER="false", EOL="\n";
+    }
+
+set exit_on_error = "true"
