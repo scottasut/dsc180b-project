@@ -1,0 +1,9 @@
+CREATE SCHEMA_CHANGE JOB local_schema_change_290902157 {
+      ADD VERTEX User(PRIMARY_ID name STRING) WITH STATS="OUTDEGREE_BY_EDGETYPE";
+      ADD VERTEX Comment(PRIMARY_ID id STRING, subreddit STRING, created_utc INT, karma INT) WITH STATS="OUTDEGREE_BY_EDGETYPE";
+      ADD VERTEX Subreddit(PRIMARY_ID name STRING) WITH STATS="OUTDEGREE_BY_EDGETYPE";
+      ADD DIRECTED EDGE wrote(FROM User, TO Comment) WITH REVERSE_EDGE="reverse_wrote";
+      ADD DIRECTED EDGE belongs_to(FROM Comment, TO Subreddit) WITH REVERSE_EDGE="reverse_belongs_to";
+      ADD DIRECTED EDGE replied_to(FROM Comment, TO Comment) WITH REVERSE_EDGE="reverse_replied_to";
+    }
+

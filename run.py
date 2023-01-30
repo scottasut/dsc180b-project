@@ -2,7 +2,7 @@ import sys
 
 sys.path.insert(0, 'src')
 
-from data.create_network import build_graph
+from dataset.create_dataset import build_graph
 
 def main(targets):
     if 'data' in targets:

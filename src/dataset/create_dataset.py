@@ -9,8 +9,8 @@ USER_COMMENT_PATH = 'data/out/users_comments.csv'
 COMMENT_COMMENT_PATH = 'data/out/comments_comments.csv'
 SUBREDDIT_COMMENT_PATH = 'data/out/subreddits_comments.csv'
 
-REMOTE_DATA_PATH = 'https://files.pushshift.io/reddit/comments/RC_2015-12.zst'
-LOCAL_DATA_PATH = 'data/raw/RC_2015-12.zst'
+REMOTE_DATA_PATH = 'https://files.pushshift.io/reddit/comments/RC_2010-12.zst'
+LOCAL_DATA_PATH = 'data/raw/RC_2010-12.zst'
 DELETED_USER = '[deleted]'
 
 def prepare():
