@@ -2,6 +2,10 @@ import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 
 class CosineKNN:
+    '''
+    Simple model using The KNN algorithm on cosine similarities
+    of Collaborative filtering feautures.
+    '''
     
     def __init__(self, data: pd.DataFrame):
         '''
@@ -17,6 +21,7 @@ class CosineKNN:
         +--------------------+
         '''
         data.columns = ['user', 'subreddit']
+        self._data = data
         self._users = data['user'].unique()
         self._subs = data['subreddit'].unique()
         data = data.groupby(['user', 'subreddit']).size().reset_index(name='n_comments')
@@ -33,7 +38,7 @@ class CosineKNN:
         self._knn = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=20, n_jobs=-1)
         self._knn.fit(self._mat)
     
-    def recommend(self, subreddits, n=1):
+    def subreddit_recommend(self, subreddits, n=1):
         sub_idx = [self._subreddits_encoding[sr] for sr in subreddits]
         distances, indices = self._knn.kneighbors(self._mat.loc[sub_idx], n_neighbors=n + 1)
         result = {}
@@ -42,3 +47,11 @@ class CosineKNN:
             idxs = indices[i]
             result[sr] = [(self._subreddits_reverse_encoding[rec], d) for rec, d in zip(idxs, dists)]
         return result
+    
+    def user_recommend(self, user, n=1, top=3):
+        user_data = self._data.loc[self._data['user'] == user]
+        if len(user_data) == 0:
+            raise ValueError('user {} does not exist.'.format(user))
+        ratios = user_data['subreddit'].value_counts().sort_index() / self._data['subreddit'].value_counts().sort_index()
+        top_subreddits = ratios.dropna().sort_values(ascending=False).iloc[0:top]
+        return self.subreddit_recommend(top_subreddits.index, n=10)
