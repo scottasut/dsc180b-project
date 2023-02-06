@@ -30,118 +30,109 @@ def prepare():
 def download():
     prepare()
 
-    print('Downloading data...')
+    print('Downloading data...\n')
 
     if os.path.exists(LOCAL_COMMENT_DATA_PATH):
-        print('{} already exists, skipping download of {}'.format(LOCAL_COMMENT_DATA_PATH, REMOTE_COMMENT_DATA_PATH))
+        print('{} already exists, skipping download of {}\n'.format(LOCAL_COMMENT_DATA_PATH, REMOTE_COMMENT_DATA_PATH))
     else:
         print('Downloading {}...'.format(REMOTE_COMMENT_DATA_PATH))
         os.system('wget -O {} {}'.format(LOCAL_COMMENT_DATA_PATH, REMOTE_COMMENT_DATA_PATH))
 
-    if os.path.exists(LOCAL_SUBREDDIT_DATA_PATH):
-        print('{} already exists, skipping download of {}'.format(LOCAL_SUBREDDIT_DATA_PATH, REMOTE_SUBREDDIT_DATA_PATH))
-    else:
-        print('Downloading {}...'.format(REMOTE_SUBREDDIT_DATA_PATH))
-        os.system('wget -O {} {}'.format(LOCAL_SUBREDDIT_DATA_PATH, REMOTE_SUBREDDIT_DATA_PATH))
+    # TODO: Add data to subreddits and users
+    # if os.path.exists(LOCAL_SUBREDDIT_DATA_PATH):
+    #     print('{} already exists, skipping download of {}\n'.format(LOCAL_SUBREDDIT_DATA_PATH, REMOTE_SUBREDDIT_DATA_PATH))
+    # else:
+    #     print('Downloading {}...'.format(REMOTE_SUBREDDIT_DATA_PATH))
+    #     os.system('wget -O {} {}'.format(LOCAL_SUBREDDIT_DATA_PATH, REMOTE_SUBREDDIT_DATA_PATH))
     
-    if os.path.exists(LOCAL_USER_DATA_PATH):
-        print('{} already exists, skipping download of {}'.format(LOCAL_USER_DATA_PATH, REMOTE_USER_DATA_PATH))
-    else:
-        print('Downloading {}...'.format(REMOTE_USER_DATA_PATH))
-        os.system('wget -O {} {}'.format(LOCAL_USER_DATA_PATH, REMOTE_USER_DATA_PATH))
+    # if os.path.exists(LOCAL_USER_DATA_PATH):
+    #     print('{} already exists, skipping download of {}\n'.format(LOCAL_USER_DATA_PATH, REMOTE_USER_DATA_PATH))
+    # else:
+    #     print('Downloading {}...'.format(REMOTE_USER_DATA_PATH))
+    #     os.system('wget -O {} {}'.format(LOCAL_USER_DATA_PATH, REMOTE_USER_DATA_PATH))
 
 def build_graph():
 
-    # download()
+    download()
 
-    print('Building network...')
+    print('Reading Data...')
 
-    subreddits = set()
-    users = set()
-    user_data = {}
-    subreddit_data = {}
-    comment_user_map = {}
+    cids = set()
+    comments = []
 
-    with lzma.open(LOCAL_USER_DATA_PATH) as f:
-        for line in f:
-            line = line.decode('UTF-8')
-            data = json.loads(line)
-            name = data['name']
-            data.pop('name', None)
-            user_data[name] = data
+    with open(LOCAL_COMMENT_DATA_PATH, 'rb') as f:
+        dctx = zstd.ZstdDecompressor(max_window_size=2147483648)
+        with dctx.stream_reader(f) as reader:
+            previous_line = ""
+            while True:
+                chunk = reader.read(2**24)
+                if not chunk:
+                    break
+
+                string_data = chunk.decode('utf-8')
+                lines = string_data.split('\n')
+                for i, line in enumerate(lines[:-1]):
+                    if i == 0:
+                        line = previous_line + line
+                    comment = json.loads(line)
+
+                    cids.add(comment['id'])
+                    comments.append({
+                        'id': comment['id'],
+                        'author': comment['author'],
+                        'subreddit': comment['subreddit'],
+                        'created_utc': comment['created_utc'],
+                        'karma': comment['score'],
+                        'pid': comment['parent_id']
+                    })
+                previous_line = lines[-1]
     
-    for l in gzip.open(LOCAL_SUBREDDIT_DATA_PATH, 'rt'):
-        data = json.loads(l)
-        # attrs = set(['allow_images', 'allow_videogifs', 'allow_videos', 'created_utc', 'display_name', 'over18' 'public_description', 'subscribers'])
-        # data = {k:v for k,v in data.items() if k in attrs}
-        name = data['display_name']
-        data.pop('display_name', None)
-        subreddit_data[name] = data
+    print('Building Graph...')
+    cu_map = {}
 
     with open(USER_PATH, 'a') as uf, open(COMMENT_PATH, 'a') as cf, open(SUBREDDIT_PATH, 'a') as sf, open(USER_COMMENT_PATH, 'a') as ucf, open(COMMENT_COMMENT_PATH, 'a') as ccf, open(SUBREDDIT_COMMENT_PATH, 'a') as scf:
-        with open(LOCAL_COMMENT_DATA_PATH, 'rb') as f:
-            dctx = zstd.ZstdDecompressor(max_window_size=2147483648)
-            with dctx.stream_reader(f) as reader:
-                previous_line = ""
-                while True:
-                    chunk = reader.read(2**24)
-                    if not chunk:
-                        break
+        for comment in comments:
+            
+            if comment['pid'][3:] not in cids:
+                continue
+        
+            # Skip [deleted] users
+            if comment['author'].lower() == DELETED_USER:
+                continue
+            
+            uf.write('{}\n'.format(comment['author']))
+            # TODO: Add features to user
+            # uf.write('{},{},{},{}\n'.format(author, link_karma, comment_karma, profile_over_18))
+            
+            cf.write('{},{},{},{}\n'.format(comment['id'], comment['subreddit'], comment['created_utc'], comment['karma']))
+            ucf.write('{},{}\n'.format(comment['author'], comment['id']))
+            ccf.write('{},{}\n'.format(comment['pid'][3:], comment['id']))
+            sf.write('{}\n'.format(comment['subreddit']))
 
-                    string_data = chunk.decode('utf-8')
-                    lines = string_data.split("\n")
-                    for i, line in enumerate(lines[:-1]):
-                        if i == 0:
-                            line = previous_line + line
-                        comment = json.loads(line)
-                        
-                        # Comment Data
-                        cid = comment['id']
-                        author = comment['author']
-                        subreddit_name = comment['subreddit']
-                        created_utc = comment['created_utc']
-                        karma = comment['score']
-                        pid = comment['parent_id']
-                        # contents = comment['body'].translate(None, string.punctuation).lower()
+            scf.write('{},{}\n'.format(comment['subreddit'], comment['id']))
+            # TODO: Add features to Subreddits
+            # sf.write('{},{},{},{},{},{},{}\n'.format(subreddit_name, allow_images, allow_videogifs, allow_videos, sub_created_utc, sub_over18, subscribers))
+            cu_map[comment['id']] = comment['author']
 
-                        # Subreddit Data
-                        subreddit = subreddit_data[subreddit_name]
-                        allow_images = subreddit['allow_images']
-                        allow_videogifs = subreddit['allow_videogifs']
-                        allow_videos = subreddit['allow_videos']
-                        sub_created_utc = subreddit['created_utc']
-                        sub_over18 = subreddit['over18']
-                        # public_description = subreddit['public_description'].translate(None, string.punctuation).lower()
-                        subscribers = subreddit['subscribers']
+    uu_counts = {}
+    with open(COMMENT_COMMENT_PATH) as ccf:
+        for l in ccf.readlines():
+            c1, c2 = l.split(',')
+            try:
+                pair = (cu_map[c1], cu_map[c2.strip()])
+            except:
+                continue
+            if pair in uu_counts:
+                uu_counts[pair] += 1
+            else:
+                uu_counts[pair] = 1
 
-                        # User Data
-                        user = user_data['author']
-                        link_karma = user['link_karma']
-                        comment_karma = user['comment_karma']
-                        profile_over_18 = user['profile_over_18']
+    with open(USER_USER_PATH, 'w') as uuf:
+        for pair in uu_counts:
+            u1, u2 = pair
+            count = uu_counts[pair]
+            uuf.write('{},{},{}\n'.format(u1, u2, count))
 
-                        if author.lower() == DELETED_USER:
-                            continue
-
-                        if author not in users:
-                            uf.write('{},{},{},{}\n'.format(author, link_karma, comment_karma, profile_over_18))
-                        cf.write('{},{},{},{}\n'.format(cid, subreddit_name, created_utc, karma))
-                        ucf.write('{},{}\n'.format(author, cid))
-                        comment_user_map[cid] = author
-                        if pid.startswith('t1_'):
-                            ccf.write('{},{}\n'.format(pid[3:], cid))
-                        if subreddit_name not in subreddits:
-                            sf.write('{},{},{},{},{},{},{}\n'.format(subreddit_name, allow_images, allow_videogifs, allow_videos, sub_created_utc, sub_over18, subscribers))
-                        scf.write('{},{}\n'.format(subreddit_name, cid))
-                        
-                        users.add(author)
-                        subreddits.add(subreddit_name)
-
-                    previous_line = lines[-1]
-    
-    ccdf = pd.read_csv(COMMENT_COMMENT_PATH, header=['c1', 'c2'])
-    ccdf['c1'] = ccdf['c1'].replace(comment_user_map)
-    ccdf['c2'] = ccdf['c2'].replace(comment_user_map)
-    uudf = ccdf.groupby(['c1', 'c2']).count()
-    uudf.to_csv(USER_USER_PATH)
+    print('Done!')
+        
 
