@@ -19,9 +19,6 @@ class SimpleJaccard:
             else:
                 self._interacted_in[u][sr] += 1
 
-    def score():
-        pass
-
     def reccomend(self, user, n=1):
         if n <= 0:
             raise ValueError('\'n\' must be a positive integer.')
@@ -29,17 +26,22 @@ class SimpleJaccard:
         for other in self._users:
             if other == user:
                 continue
-            others.append((self._coef(user, other), other))
+            coef = self._coef(user, other)
+            if coef < 1:
+                others.append((coef, other))
         others.sort(reverse=True)
         for coef, other in others:
-            if coef < 1:
-                other_subreddits = set(self._interacted_in[other].keys())
-                subreddits = set(self._interacted_in[user].keys())
-                reccomendations = tuple(other_subreddits - subreddits)
-                if n == 1:
-                    return random.choice(reccomendations)
-                else:
-                    return random.sample(reccomendations, k=min(n, len(reccomendations)))
+            other_subreddits = set(self._interacted_in[other].keys())
+            for sr in other_subreddits:
+                if not sr in self._interacted_in[user]:
+                    return sr
+        return 'NA'
+            # subreddits = set(self._interacted_in[user].keys())
+            # reccomendations = tuple(other_subreddits - subreddits)
+            # if n == 1:
+            #     return random.choice(reccomendations)
+            # else:
+            #     return random.sample(reccomendations, k=min(n, len(reccomendations)))
 
     def _coef(self, u1, u2):
         '''
