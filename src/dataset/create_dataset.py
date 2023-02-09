@@ -100,7 +100,7 @@ def build_graph():
             if comment['author'].lower() == DELETED_USER:
                 continue
             
-            # uf.write('{}\n'.format(comment['author']))
+            uf.write('{}\n'.format(comment['author']))
             # TODO: Add features to user
             # uf.write('{},{},{},{}\n'.format(author, link_karma, comment_karma, profile_over_18))
             
