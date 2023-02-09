@@ -1,3 +1,7 @@
+'''
+Tool for loading API data: no longer project requirement.
+'''
+
 import os
 import json
 import praw
