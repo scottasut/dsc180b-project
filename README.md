@@ -24,3 +24,5 @@ In order to help guide the users and subreddits we wanted to include, we used th
 ## Resources:
 - [Reddit API](https://www.reddit.com/dev/api/)
 - [Reddit Network Explorer](https://github.com/memgraph/reddit-network-explorer)
+- [Reddit Comment Datasets](https://files.pushshift.io/reddit/comments/)
+- [TigerGraph Community ML Algos](https://docs.tigergraph.com/graph-ml/current/community-algorithms/)
