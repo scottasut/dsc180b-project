@@ -102,7 +102,7 @@ def build_graph():
             
             # uf.write('{}\n'.format(comment['author']))
             # TODO: Add features to user
-            uf.write('{},{},{},{}\n'.format(author, link_karma, comment_karma, profile_over_18))
+            # uf.write('{},{},{},{}\n'.format(author, link_karma, comment_karma, profile_over_18))
             
             cf.write('{},{},{},{}\n'.format(comment['id'], comment['subreddit'], comment['created_utc'], comment['karma']))
             ucf.write('{},{}\n'.format(comment['author'], comment['id']))
