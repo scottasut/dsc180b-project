@@ -25,6 +25,21 @@ Before we can get going, there are a few steps we need to take. Making sure we h
 To download the data, simply run `py run.py data`. This will download the necessary files and parse them into the graph representation that this project uses. Please note: this data is reasonably large, 
 
 
+#### TigerGraph Specifics:
+For access to TigerGraph, you are going to need to set up a config file with the following information:
+```
+{
+    "host": "<The Host for your TigerGraph Cluster>",
+    "graphname": "<The Name of Your Graph>",
+    "username": "<Your TigerGraph Username>",
+    "password": "<Your TigerGraph Password>",
+    "gsqlSecret": "<Your Secret Key>",
+    "certPath": "<The location of your my-cert.txt>"
+}
+```
+For info on `my-cert.txt`, please refer to [this guide](https://dev.tigergraph.com/forum/t/tigergraph-python-connection-issue/2776)
+
+
 ### Data Generation:
 <!-- In order to run this project, you will need two things for the data generation process: A Reddit account and a Kaggle account. If do not have one of these or both you can create them [here](https://www.kaggle.com/account/login?phase=startRegisterTab&returnUrl=%2F) and [here](https://www.reddit.com/register/) respectively. This is crucial in order to use the APIs provided by each of these platforms to procure the data needed for this project.
 
