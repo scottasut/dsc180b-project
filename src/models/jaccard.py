@@ -49,7 +49,7 @@ class SimpleJaccard:
         Returns:
             list: subreddit recommendations
         """
-        log.info('reccomend entry for user {}, n={}'.format(user, n))
+        log.info('recommend entry for user {}, n={}'.format(user, n))
         if n <= 0:
             log.exception('recommendation attempt with non-positive output cardinality n={}.'.format(n))
             raise ValueError('\'n\' must be a positive integer.')
@@ -68,14 +68,14 @@ class SimpleJaccard:
         #             return sr
         # return 'NA'
             subreddits = set(self._interacted_in[user].keys())
-            reccomendations = tuple(other_subreddits - subreddits)
+            recommendations = tuple(other_subreddits - subreddits)
             if n == 1:
-                out = [random.choice(reccomendations)]
-                log.info('reccomend exit for user {}, n=1. Output: {}'.format(user, out))
+                out = [random.choice(recommendations)]
+                log.info('recommend exit for user {}, n=1. Output: {}'.format(user, out))
                 return out
             else:
-                out = random.sample(reccomendations, k=min(n, len(reccomendations)))
-                log.info('reccomend exit for user {}, n={}. Output: {}'.format(user, n, out))
+                out = random.sample(recommendations, k=min(n, len(recommendations)))
+                log.info('recommend exit for user {}, n={}. Output: {}'.format(user, n, out))
                 return out
 
     def _coef(self, u1: str, u2: str) -> float:

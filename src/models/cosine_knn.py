@@ -53,7 +53,7 @@ class CosineKNN:
         Returns:
             dict: mapping of passed subreddits to most similar subreddits and similarity scores
         """
-        log.info('subreddit reccomend entry for subreddits={}, n={}'.format(subreddits, n))
+        log.info('subreddit recommend entry for subreddits={}, n={}'.format(subreddits, n))
         sub_idx = [self._subreddits_encoding[sr] for sr in subreddits]
         distances, indices = self._knn.kneighbors(self._mat.loc[sub_idx], n_neighbors=n + 1)
         result = {}
@@ -61,7 +61,7 @@ class CosineKNN:
             dists = distances[i]
             idxs = indices[i]
             result[sr] = [(self._subreddits_reverse_encoding[rec], d) for rec, d in zip(idxs, dists)]
-        log.info('subreddit reccomend exit for subreddits={}, n={}. Output: {}'.format(subreddits, n, result))
+        log.info('subreddit recommend exit for subreddits={}, n={}. Output: {}'.format(subreddits, n, result))
         return result
     
     def user_recommend(self, user, n=1, top=5) -> list:
@@ -75,7 +75,7 @@ class CosineKNN:
         Returns:
             list: Subreddit recommendations
         """
-        log.info('reccomend entry for user {}, n={}, top={}'.format(user, n, top))
+        log.info('recommend entry for user {}, n={}, top={}'.format(user, n, top))
         # user_data = self._data.loc[self._data['user'] == user]
         # if len(user_data) == 0:
         #     raise ValueError('user {} does not exist.'.format(user))
@@ -93,5 +93,5 @@ class CosineKNN:
             else:
                 to_rec[sr] = score
         out = sorted(to_rec, key=to_rec.get)[:n]
-        log.info('reccomend exit for user {}, n={}, top={}. Output: {}'.format(user, n, top, out))
+        log.info('recommend exit for user {}, n={}, top={}. Output: {}'.format(user, n, top, out))
         return out
