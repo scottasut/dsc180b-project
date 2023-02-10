@@ -88,5 +88,11 @@ class SimpleJaccard:
         Returns:
             float: Similarity coefficient between u1 and u2 based off of interacted subreddits. Value between 0 and 1, larger means more similar.
         """
+        if u1 not in self._interacted_in:
+            log.exception('_coef calculation between users {}, {} failed: user \'{}\' does not exist.'.format(u1, u2, u1))
+            raise ValueError('user \'{}\' does not exist.'.format(u1))
+        if u2 not in self._interacted_in:
+            log.exception('_coef calculation between users {}, {} failed: user \'{}\' does not exist.'.format(u1, u2, u2))
+            raise ValueError('user \'{}\' does not exist.'.format(u2))
         u1_inter, u2_inter = set(self._interacted_in[u1].keys()), set(self._interacted_in[u2].keys())
         return len(u1_inter.intersection(u1_inter)) / len(u1_inter.union(u2_inter))
