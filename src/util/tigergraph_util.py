@@ -12,6 +12,7 @@ def connect():
         password=args["password"],
         gsqlSecret=args["gsqlSecret"]
     )
+    conn.getToken(args["gsqlSecret"])
     if not connected(conn):
         raise ConnectionError("Failed to conenct to GSQL")
     return conn

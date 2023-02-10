@@ -10,11 +10,8 @@ class SimpleJaccard:
         for d in data:
             if type(d) not in [tuple, list] or len(d) != 2:
                 raise ValueError('Elements of \'data\' should be tuples of the following format: (user, comment, subreddit)')
-            
             u, sr = d
-
             self._users.add(u)
-
             if u not in self._interacted_in:
                 self._interacted_in[u] = {}
             if sr not in self._interacted_in[u]:
@@ -22,22 +19,29 @@ class SimpleJaccard:
             else:
                 self._interacted_in[u][sr] += 1
 
-    def score():
-        pass
-
-    def reccomend(self, user):
+    def reccomend(self, user, n=1):
+        if n <= 0:
+            raise ValueError('\'n\' must be a positive integer.')
         others = []
         for other in self._users:
             if other == user:
                 continue
-            others.append((self._coef(user, other), other))
+            coef = self._coef(user, other)
+            if coef < 1:
+                others.append((coef, other))
         others.sort(reverse=True)
         for coef, other in others:
-            if coef < 1:
-                other_subreddits = set(self._interacted_in[other].keys())
-                subreddits = set(self._interacted_in[user].keys())
-                reccomendations = tuple(other_subreddits - subreddits)
-                return random.choice(reccomendations)
+            other_subreddits = set(self._interacted_in[other].keys())
+            for sr in other_subreddits:
+                if not sr in self._interacted_in[user]:
+                    return sr
+        return 'NA'
+            # subreddits = set(self._interacted_in[user].keys())
+            # reccomendations = tuple(other_subreddits - subreddits)
+            # if n == 1:
+            #     return random.choice(reccomendations)
+            # else:
+            #     return random.sample(reccomendations, k=min(n, len(reccomendations)))
 
     def _coef(self, u1, u2):
         '''
@@ -46,23 +50,3 @@ class SimpleJaccard:
         '''
         u1_inter, u2_inter = set(self._interacted_in[u1].keys()), set(self._interacted_in[u2].keys())
         return len(u1_inter.intersection(u1_inter)) / len(u1_inter.union(u2_inter))
-
-
-class CommentChainJaccard:
-    pass
-
-comments_to_subreddit = {}
-data = []
-with open('../../data/out/users_comments.csv') as ucf, open('../../data/out/comments.csv') as cf:
-    for l in cf.readlines():
-        c, sr, _, _ = l.split(',')
-        comments_to_subreddit[c] = sr
-
-    for l in ucf.readlines():
-        u, c = l.split(',')
-        data.append((u, comments_to_subreddit[c.strip()]))
-
-mdl = SimpleJaccard(data)
-rec = mdl.reccomend('Skookah')
-# print(mdl._interacted_in['Skookah'])
-print(rec)
