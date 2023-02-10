@@ -182,8 +182,5 @@ class RedditGraph():
         return recs
 
 
-graph = RedditGraph("../../configs/tg_config.json")
-
-
 
     
