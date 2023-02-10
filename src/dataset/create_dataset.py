@@ -1,9 +1,8 @@
 import zstandard as zstd
-import lzma
-import gzip
 import json
 import os
-import pandas as pd
+import logging
+log = logging.getLogger(__name__)
 
 USER_PATH = 'data/out/users.csv'
 COMMENT_PATH = 'data/out/comments.csv'
@@ -22,36 +21,35 @@ LOCAL_USER_DATA_PATH = 'data/raw/RA_2011.xz'
 DELETED_USER = '[deleted]'
 
 def prepare():
+    log.info('[Data Directory Preparation] task entry.')
     if not os.path.exists('data'):
+        log.info('Creating \'data\' directory.')
         os.mkdir('data')
         os.mkdir('data/raw')
         os.mkdir('data/out')
+    else:
+        log.info('\'data\' directory already exists. Skipping directory creation.')
+    log.info('[Data Directory Preparation] task exit.')
 
 def download():
     prepare()
 
+    log.info('[Data Download] task entry.')
     print('Downloading data...\n')
 
     if os.path.exists(LOCAL_COMMENT_DATA_PATH):
+        log.info('{} already exists, skipping download of {}\n'.format(LOCAL_COMMENT_DATA_PATH, REMOTE_COMMENT_DATA_PATH))
         print('{} already exists, skipping download of {}\n'.format(LOCAL_COMMENT_DATA_PATH, REMOTE_COMMENT_DATA_PATH))
     else:
+        log.info('Downloading {}...'.format(REMOTE_COMMENT_DATA_PATH))
         print('Downloading {}...'.format(REMOTE_COMMENT_DATA_PATH))
         os.system('wget -O {} {}'.format(LOCAL_COMMENT_DATA_PATH, REMOTE_COMMENT_DATA_PATH))
-
-    # TODO: Add data to subreddits and users
-    # if os.path.exists(LOCAL_SUBREDDIT_DATA_PATH):
-    #     print('{} already exists, skipping download of {}\n'.format(LOCAL_SUBREDDIT_DATA_PATH, REMOTE_SUBREDDIT_DATA_PATH))
-    # else:
-    #     print('Downloading {}...'.format(REMOTE_SUBREDDIT_DATA_PATH))
-    #     os.system('wget -O {} {}'.format(LOCAL_SUBREDDIT_DATA_PATH, REMOTE_SUBREDDIT_DATA_PATH))
     
-    # if os.path.exists(LOCAL_USER_DATA_PATH):
-    #     print('{} already exists, skipping download of {}\n'.format(LOCAL_USER_DATA_PATH, REMOTE_USER_DATA_PATH))
-    # else:
-    #     print('Downloading {}...'.format(REMOTE_USER_DATA_PATH))
-    #     os.system('wget -O {} {}'.format(LOCAL_USER_DATA_PATH, REMOTE_USER_DATA_PATH))
+    log.info('[Data Downlaoding] task exit.')
 
 def build_graph():
+
+    log.info('[Graph generation] task entry.')
 
     download()
 
@@ -59,6 +57,8 @@ def build_graph():
 
     cids = set()
     comments = []
+
+    log.info('Parsing {}'.format(LOCAL_COMMENT_DATA_PATH))
 
     with open(LOCAL_COMMENT_DATA_PATH, 'rb') as f:
         dctx = zstd.ZstdDecompressor(max_window_size=2147483648)
@@ -88,8 +88,11 @@ def build_graph():
                 previous_line = lines[-1]
     
     print('Building Graph...')
-    cu_map = {}
+    log.info('Building graph.')
 
+    cu_map = {}
+    
+    log.info('Writing to [\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\']'.format(USER_PATH, COMMENT_PATH, SUBREDDIT_PATH, USER_COMMENT_PATH, COMMENT_COMMENT_PATH, SUBREDDIT_COMMENT_PATH))
     with open(USER_PATH, 'a') as uf, open(COMMENT_PATH, 'a') as cf, open(SUBREDDIT_PATH, 'a') as sf, open(USER_COMMENT_PATH, 'a') as ucf, open(COMMENT_COMMENT_PATH, 'a') as ccf, open(SUBREDDIT_COMMENT_PATH, 'a') as scf:
         for comment in comments:
             
@@ -127,6 +130,7 @@ def build_graph():
             else:
                 uu_counts[pair] = 1
 
+    log.info('Writing to [\'{}\']'.format(USER_USER_PATH))
     with open(USER_USER_PATH, 'w') as uuf:
         for pair in uu_counts:
             u1, u2 = pair
@@ -134,5 +138,6 @@ def build_graph():
             uuf.write('{},{},{}\n'.format(u1, u2, count))
 
     print('Done!')
+    log.info('[Graph Generation] task exit.')
         
 
