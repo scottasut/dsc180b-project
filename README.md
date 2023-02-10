@@ -9,9 +9,15 @@ In order to download the data in an automated fashion, you will need `wget`. If 
 For access to TigerGraph, you are going to need to set up a config file with the following information:
 ```
 {
-  
+    "host": "<The Host for your TigerGraph Cluster>",
+    "graphname": "<The Name of Your Graph>",
+    "username": "<Your TigerGraph Username>",
+    "password": "<Your TigerGraph Password>",
+    "gsqlSecret": "<Your Secret Key>",
+    "certPath": "<The location of your my-cert.txt>"
 }
 ```
+For info on `my-cert.txt`, please refer to [this guide](https://dev.tigergraph.com/forum/t/tigergraph-python-connection-issue/2776)
 
 
 ### Data Generation:
