@@ -140,7 +140,7 @@ def build_graph():
     with open(USER_USER_PATH, 'w') as uuf:
         for pair in uu_counts:
             u1, u2 = pair
-            count = uu_counts[pair]
+            count = -uu_counts[pair]
             uuf.write('{},{},{}\n'.format(u1, u2, count))
 
     print('Done!')
