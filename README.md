@@ -2,7 +2,9 @@
 
 ## Project Summary:
 
-This capstone project focuses on graph-based recommender systems for the social media platform Reddit. Users can choose to comment, subscribe, or otherwise interact in different online communities within Reddit called subreddits. Utilizing the graph database and analytics software TigerGraph, we create a recommendation model that recommends subreddits to users based on a variety of different interaction-related features. 
+This capstone project focuses on graph-based recommender systems for the social media platform Reddit. Users can choose to comment, subscribe, or otherwise interact in different online communities within Reddit called subreddits. Utilizing the graph database and analytics software TigerGraph, we create a recommendation model that recommends subreddits to users based on a variety of different interaction-related features.
+
+For the code checkpoint, we do not have a test target due to reliance on TigerGraph. For a quick demo that our code up to this point is working, please refer to [this video.](https://youtu.be/mfJwbF27YR0)
 
 ## Project Organization:
 Due to the nature of our project, there will be no test target. Currently, the hierarchy of our project goes as follows:
