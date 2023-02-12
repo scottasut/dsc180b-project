@@ -7,6 +7,7 @@ This capstone project focuses on graph-based recommender systems for the social 
 ## Project Organization:
 Due to the nature of our project, there will be no test target. Currently, the hierarchy of our project goes as follows:
 
+```
 Project/
 ├─ notebooks/
 │  ├─ eda.ipynb
@@ -30,7 +31,7 @@ Project/
 ├─ .gitignore
 ├─ README.md
 ├─ run.py
-
+```
 
 ## Setup:
 
