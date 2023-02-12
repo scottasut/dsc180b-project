@@ -1,7 +1,10 @@
 import pyTigerGraph as tg
 import json
 import pandas as pd
+import numpy as np
 import random
+from sklearn.neighbors import NearestNeighbors
+from src.models.popular_recommender import PopularRecommender
 import sys
 import logging
 sys.path.append('../')
@@ -15,11 +18,24 @@ class RedditGraph():
     """Handler class for our TigerGraph data model and recommendation tasks.
     """
 
-    def __init__(self, config_path):
+    def __init__(self, config_path, default_prediction=None):
         self.config_path = config_path
         self.conn = self.connection()
         self.f = self.conn.gds.featurizer()
         self.generate_secret()
+        if default_prediction == 'popular':
+            data = []
+            comments_to_subreddit = {}
+            with open('../data/out/users_comments.csv') as ucf, open('../data/out/comments.csv') as cf:
+                for l in cf.readlines():
+                    c, sr, _, _ = l.split(',')
+                    comments_to_subreddit[c] = sr
+
+                for l in ucf.readlines():
+                    u, c = l.split(',')
+                    data.append((u, comments_to_subreddit[c.strip()]))
+            df = pd.DataFrame(data, columns=['user', 'subreddit'])
+            self._popular_recommender = PopularRecommender(df)
     
     def connection(self):
         """Establishes a connetion to TigerGraph using credentials which should be in config.json
@@ -86,6 +102,18 @@ class RedditGraph():
         log.info('get_total_edge_count entry')
         result = self.conn.getEdgeCount()
         log.info('get_total_edge_count exit. Output: {}'.format(result))
+        return result
+    
+    def get_vertex_type(self, v_type: str):
+        log.info('get_vertex_type entry for v_type={}'.format(v_type))
+        result = self.conn.getVertices(v_type)
+        log.info('get_vertex_type exit for v_type={}. Output cardinality={}'.format(v_type, len(result)))
+        return result
+    
+    def get_vertex_by_id(self, v_type: str, v_id: str):
+        log.info('get_vertex_by_id entry for v_type={}'.format(v_type))
+        result = self.conn.getVerticesById(v_type, [v_id])
+        log.info('get_vertex_by_id exit for v_type={}. Output cardinality={}'.format(v_type, len(result)))
         return result
 
     def pagerank(self, v_type: str, e_type: str, result_attr: str):
@@ -203,6 +231,60 @@ class RedditGraph():
         
         log.info('louvain exit for params={}. Output: {}'.format(louvain_params, result))
         return result
+    
+    def predict_louvain(self, v_id: str):
+        params = {"u": v_id}
+        log.info('predict_louvain entry for params={}'.format(params))
+
+        result = self.conn.runInstalledQuery('get_louvain_neighbors', params=params)
+        neighbors = result[0]['neighbors']
+        subreddit_pool = set()
+        u_subs = self.get_subreddits(v_id)
+        for u in neighbors:
+            name = u['v_id']
+            srs = self.get_subreddits(name)
+            for sr in srs:
+                subreddit_pool.add(sr)
+        eligible_subs = subreddit_pool - u_subs
+
+        if len(eligible_subs) == 0: # No difference in neighbors interactions
+            rec = self._popular_recommender.recommend(v_id)
+            print('pop used')
+            log.info('predict_louvain exit for params={}, Output ={}'.format(params, rec))
+            return rec
+
+        similar_subs = {}
+        for s1 in u_subs:
+            for s2 in eligible_subs:
+                similar_subs[(s1, s2)] = self.calc_sim(s1, s2)
+        
+        _, rec = max(similar_subs, key=similar_subs.get)
+        log.info('predict_louvain exit for params={}, Output ={}'.format(params, rec))
+        return rec
+    
+    def fit_knn(self, v_type: str, k=1):
+        df = self.conn.getVertexDataFrame(v_type, select='embeddings')
+        users = df['v_id']
+        self._knn_user_idx_map = {i:u for i, u in zip(range(len(users)), users)}
+        df = df['embeddings'].apply(pd.Series)
+        df.columns = ['pagerank', 'louvain', 'label_prop', 'degree']
+        self._knn_embeddings = df
+        self._knn_embeddings.index = users
+        self._knn = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=k+1, n_jobs=-1).fit(df)
+
+    def predict_knn(self, v_id: str):
+        if not self._knn:
+            raise Exception('Must call "fit_kmeans" first.')
+        distances, indices = self._knn.kneighbors(np.array([self._knn_embeddings.loc[v_id]]))
+        eligible_subs = set()
+        u_subs = self.get_subreddits(v_id)
+        for index in indices[0][1:]:
+            other = self._knn_user_idx_map[index]
+            other_subs = self.get_subreddits(other)
+            for sr in other_subs:
+                eligible_subs.add(sr)
+        return eligible_subs - u_subs
+        
     
     def label_propagation(self, v_type_set: list, e_type_set: list, attr: str, maximum_iteration=10):
         """Runs the Label Propagation Algorithm in TigerGraph.
