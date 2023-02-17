@@ -18,24 +18,23 @@ class RedditGraph():
     """Handler class for our TigerGraph data model and recommendation tasks.
     """
 
-    def __init__(self, config_path, default_prediction=None):
+    def __init__(self, config_path):
         self.config_path = config_path
         self.conn = self.connection()
         self.f = self.conn.gds.featurizer()
         self.generate_secret()
-        if default_prediction == 'popular':
-            data = []
-            comments_to_subreddit = {}
-            with open('../data/out/users_comments.csv') as ucf, open('../data/out/comments.csv') as cf:
-                for l in cf.readlines():
-                    c, sr, _, _ = l.split(',')
-                    comments_to_subreddit[c] = sr
+        data = []
+        comments_to_subreddit = {}
+        with open('../data/out/users_comments.csv') as ucf, open('../data/out/comments.csv') as cf:
+            for l in cf.readlines():
+                c, sr, _, _ = l.split(',')
+                comments_to_subreddit[c] = sr
 
-                for l in ucf.readlines():
-                    u, c = l.split(',')
-                    data.append((u, comments_to_subreddit[c.strip()]))
-            df = pd.DataFrame(data, columns=['user', 'subreddit'])
-            self._popular_recommender = PopularRecommender(df)
+            for l in ucf.readlines():
+                u, c = l.split(',')
+                data.append((u, comments_to_subreddit[c.strip()]))
+        df = pd.DataFrame(data, columns=['user', 'subreddit'])
+        self._popular_recommender = PopularRecommender(df)
     
     def connection(self):
         """Establishes a connetion to TigerGraph using credentials which should be in config.json
@@ -253,14 +252,14 @@ class RedditGraph():
             log.info('predict_louvain exit for params={}, Output ={}'.format(params, rec))
             return rec
 
-        similar_subs = {}
-        for s1 in u_subs:
-            for s2 in eligible_subs:
-                similar_subs[(s1, s2)] = self.calc_sim(s1, s2)
+        # similar_subs = {}
+        # for s1 in u_subs:
+        #     for s2 in eligible_subs:
+        #         similar_subs[(s1, s2)] = self.calc_sim(s1, s2)
         
-        _, rec = max(similar_subs, key=similar_subs.get)
+        # _, rec = max(similar_subs, key=similar_subs.get)
         log.info('predict_louvain exit for params={}, Output ={}'.format(params, rec))
-        return rec
+        return eligible_subs
     
     def fit_knn(self, v_type: str, k=1):
         df = self.conn.getVertexDataFrame(v_type, select='embeddings')
@@ -272,7 +271,7 @@ class RedditGraph():
         self._knn_embeddings.index = users
         self._knn = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=k+1, n_jobs=-1).fit(df)
 
-    def predict_knn(self, v_id: str):
+    def predict_knn(self, v_id: str, k=1):
         if not self._knn:
             raise Exception('Must call "fit_kmeans" first.')
         distances, indices = self._knn.kneighbors(np.array([self._knn_embeddings.loc[v_id]]))
@@ -283,7 +282,15 @@ class RedditGraph():
             other_subs = self.get_subreddits(other)
             for sr in other_subs:
                 eligible_subs.add(sr)
-        return eligible_subs - u_subs
+        recommendations = list(eligible_subs - u_subs)
+        if len(recommendations) > k:
+            return recommendations[:k]
+        else:
+            while len(recommendations) < k:
+                pop_recs = self._popular_recommender.recommend(v_id, n=k - len(recommendations), avoid=recommendations)
+                for pr in pop_recs:    
+                    recommendations.append(pr)
+        return recommendations
         
     
     def label_propagation(self, v_type_set: list, e_type_set: list, attr: str, maximum_iteration=10):

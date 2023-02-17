@@ -42,7 +42,7 @@ class PopularRecommender:
         self._popular_subreddits = [sr for _, sr in sorted([(v, k) for k, v in subreddit_counts.items()], reverse=True)]
         log.info('model instantiation exit.')
     
-    def recommend(self, user: str, n=1) -> list:
+    def recommend(self, user: str, n=1, avoid=None) -> list:
         """_summary_
 
         Args:
@@ -56,6 +56,8 @@ class PopularRecommender:
             list: recommendations
         """
         log.info('recommend entry for user {}, n={}'.format(user, n))
+        if avoid == None:
+            avoid = []
         if user not in self._interacted_in:
             log.exception('recommendation for user {} failed: user {} does not exist'.format(user, user))
             raise ValueError('user {} does not exist.'.format(user))
@@ -65,7 +67,7 @@ class PopularRecommender:
             if len(result) == n:
                 log.info('recommend exit for user {}, n={}. Output: {}'.format(user, n, result))
                 return result
-            if sr not in user_subs:
+            if sr not in user_subs and sr not in avoid:
                 result.append(sr)
         log.info('recommend exit for user {}, n={}. Output: {}'.format(user, n, result))
         return result

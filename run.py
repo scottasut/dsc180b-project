@@ -9,11 +9,12 @@ logging.basicConfig(filename='log.txt',
 
 sys.path.insert(0, 'src')
 
-from dataset.create_dataset import build_graph
+from dataset.create_dataset import build_graph, build_test_set
 
 def main(targets):
     if 'data' in targets:
         build_graph()
+        build_test_set()
     if 'test' in targets:
         pass
 
