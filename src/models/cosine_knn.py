@@ -65,7 +65,7 @@ class CosineKNN:
         log.info('subreddit recommend exit for subreddits={}, n={}. Output: {}'.format(subreddits, n, result))
         return result
     
-    def user_recommend(self, user, n=1, top=5) -> list:
+    def recommend(self, user, n=1, top=5) -> list:
         """Recommends a subreddit to a user.
 
         Args:

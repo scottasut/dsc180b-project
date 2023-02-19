@@ -151,6 +151,8 @@ def build_graph():
         
 def build_test_set():
 
+    log.info('test data generation task entry.')
+
     download(REMOTE_TEST_COMMENT_DATA_PATH, LOCAL_TEST_COMMENT_DATA_PATH)
 
     test_interactions = {}
@@ -170,6 +172,7 @@ def build_test_set():
                 users_to_subreddit[u] = set()
             users_to_subreddit[u].add(comments_to_subreddit[c.strip()])
     
+    log.info('parsing {}'.format(LOCAL_TEST_COMMENT_DATA_PATH))
     with open(LOCAL_TEST_COMMENT_DATA_PATH, 'rb') as f:
         dctx = zstd.ZstdDecompressor(max_window_size=2147483648)
         with dctx.stream_reader(f) as reader:
@@ -195,10 +198,11 @@ def build_test_set():
                         
                 previous_line = lines[-1]
     
+    log.info('writing to {}'.format(TEST_INTERACTION_PATH))
     with open(TEST_INTERACTION_PATH, 'w') as f:
         for user in test_interactions.keys():
             for subreddit in test_interactions[user]:
                 if subreddit not in users_to_subreddit[user]:
                     f.write('{}, {}\n'.format(user, subreddit))
-
-                
+    
+    log.info('test data generation task exit.')

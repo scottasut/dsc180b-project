@@ -231,7 +231,7 @@ class RedditGraph():
         log.info('louvain exit for params={}. Output: {}'.format(louvain_params, result))
         return result
     
-    def predict_louvain(self, v_id: str):
+    def predict_louvain(self, v_id: str, n=1):
         params = {"u": v_id}
         log.info('predict_louvain entry for params={}'.format(params))
 
@@ -244,22 +244,25 @@ class RedditGraph():
             srs = self.get_subreddits(name)
             for sr in srs:
                 subreddit_pool.add(sr)
-        eligible_subs = subreddit_pool - u_subs
 
-        if len(eligible_subs) == 0: # No difference in neighbors interactions
-            rec = self._popular_recommender.recommend(v_id)
-            print('pop used')
-            log.info('predict_louvain exit for params={}, Output ={}'.format(params, rec))
+        recommendations = list(subreddit_pool - u_subs)
+        if len(recommendations) < n: # No difference in neighbors interactions
+            pop_recs = self._popular_recommender.recommend(v_id, n=n - len(recommendations))
+            for rec in pop_recs:
+                recommendations.append(rec)
+            log.info('predict_louvain exit for params={}, Output ={}'.format(params, recommendations))
             return rec
+        else:
+            recommendations = random.sample(recommendations, n)
+            # similar_subs = {}
+            # for s1 in u_subs:
+            #     for s2 in eligible_subs:
+            #         similar_subs[(s1, s2)] = self.calc_sim(s1, s2)
+            
+            # _, rec = max(similar_subs, key=similar_subs.get)
 
-        # similar_subs = {}
-        # for s1 in u_subs:
-        #     for s2 in eligible_subs:
-        #         similar_subs[(s1, s2)] = self.calc_sim(s1, s2)
-        
-        # _, rec = max(similar_subs, key=similar_subs.get)
-        log.info('predict_louvain exit for params={}, Output ={}'.format(params, rec))
-        return eligible_subs
+            log.info('predict_louvain exit for params={}, Output ={}'.format(params, recommendations))
+            return recommendations
     
     def fit_knn(self, v_type: str, k=1):
         df = self.conn.getVertexDataFrame(v_type, select='embeddings')
@@ -271,7 +274,7 @@ class RedditGraph():
         self._knn_embeddings.index = users
         self._knn = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=k+1, n_jobs=-1).fit(df)
 
-    def predict_knn(self, v_id: str, k=1):
+    def predict_knn(self, v_id: str, n=1):
         if not self._knn:
             raise Exception('Must call "fit_kmeans" first.')
         distances, indices = self._knn.kneighbors(np.array([self._knn_embeddings.loc[v_id]]))
@@ -283,15 +286,24 @@ class RedditGraph():
             for sr in other_subs:
                 eligible_subs.add(sr)
         recommendations = list(eligible_subs - u_subs)
-        if len(recommendations) > k:
-            return recommendations[:k]
+        if len(recommendations) > n:
+            return recommendations[:n]
         else:
-            while len(recommendations) < k:
-                pop_recs = self._popular_recommender.recommend(v_id, n=k - len(recommendations), avoid=recommendations)
+            while len(recommendations) < n:
+                pop_recs = self._popular_recommender.recommend(v_id, n=n - len(recommendations), avoid=recommendations)
                 for pr in pop_recs:    
                     recommendations.append(pr)
         return recommendations
-        
+    
+    def recommend(self, user: str, n=1, how='knn'):
+        how = how.lower()
+        if how not in ['louvain', 'knn']:
+            raise ValueError('\'how\' must be one of [\'louvain\', \'knn\']')
+
+        if how == 'louvain':
+            return self.predict_louvain(user, n=n)
+        elif how == 'knn':
+            return self.predict_knn(user, n)
     
     def label_propagation(self, v_type_set: list, e_type_set: list, attr: str, maximum_iteration=10):
         """Runs the Label Propagation Algorithm in TigerGraph.

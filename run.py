@@ -2,7 +2,7 @@ import sys
 import logging
 
 logging.basicConfig(filename='log.txt', 
-    filemode='a', 
+    filemode='a',
     level=logging.INFO,
     datefmt='%H:%M:%S',
     format='%(asctime)s %(levelname)s %(message)s')

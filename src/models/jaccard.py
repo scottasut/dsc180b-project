@@ -61,22 +61,23 @@ class SimpleJaccard:
             if coef < 1:
                 others.append((coef, other))
         others.sort(reverse=True)
+        subreddits = self._interacted_in[user].keys()
+        recommendations = set()
         for coef, other in others:
-            other_subreddits = set(self._interacted_in[other].keys())
-        #     for sr in other_subreddits:
-        #         if not sr in self._interacted_in[user]:
-        #             return sr
-        # return 'NA'
-            subreddits = set(self._interacted_in[user].keys())
-            recommendations = tuple(other_subreddits - subreddits)
-            if n == 1:
-                out = [random.choice(recommendations)]
-                log.info('recommend exit for user {}, n=1. Output: {}'.format(user, out))
-                return out
-            else:
-                out = random.sample(recommendations, k=min(n, len(recommendations)))
-                log.info('recommend exit for user {}, n={}. Output: {}'.format(user, n, out))
-                return out
+            if len(recommendations) >= n:
+                break
+            for osr in self._interacted_in[other].keys():
+                if osr not in subreddits:
+                    recommendations.add(osr)
+        recommendations = tuple(recommendations)
+        if n == 1:
+            out = [random.choice(recommendations)]
+            log.info('recommend exit for user {}, n=1. Output: {}'.format(user, out))
+            return out
+        else:
+            out = random.sample(recommendations, k=min(n, len(recommendations)))
+            log.info('recommend exit for user {}, n={}. Output: {}'.format(user, n, out))
+            return out
 
     def _coef(self, u1: str, u2: str) -> float:
         """Calculates the Jaccard coefficient between two users based off of given input data.
