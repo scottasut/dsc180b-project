@@ -8,9 +8,10 @@ configure_logger('../log.txt')
 log = logging.getLogger(__name__)
 
 class CosineKNN:
-    '''
+    """
     Simple model using The KNN algorithm on cosine similarities of Collaborative filtering feautures.
-    '''
+    """
+    
     def __init__(self, data) -> None:
         """Instantiates and fills data structures for making KNN Cosine similarity recommendations. Trains sklearn.neighbors.NearestNeighbors model.
 
@@ -44,7 +45,7 @@ class CosineKNN:
         log.info('model instantiation exit.')
     
     def subreddit_recommend(self, subreddits, n=1) -> dict:
-        """Gets simialar subreddits for each passed subreddit.
+        """Gets similar subreddits for each passed subreddit.
 
         Args:
             subreddits (collection): collection of subreddits to get similar subreddits for.
@@ -64,7 +65,7 @@ class CosineKNN:
         log.info('subreddit recommend exit for subreddits={}, n={}. Output: {}'.format(subreddits, n, result))
         return result
     
-    def user_recommend(self, user, n=1, top=5) -> list:
+    def recommend(self, user, n=1, top=5) -> list:
         """Recommends a subreddit to a user.
 
         Args:
