@@ -5,6 +5,8 @@ import scipy.sparse as ssp
 import numpy as np
 from torch_geometric.utils import coalesce
 from torch_geometric.typing import Adj
+import torch.nn.functional as F
+from torch_geometric.nn import GCN
 from tqdm.auto import trange
 import json
 import matplotlib.pyplot as plt
@@ -15,21 +17,20 @@ class GCNHandler:
         self.conn = self.connection()
         self.f = self.conn.gds.featurizer()
         self.generate_secret()
-        # self.split_vertices()
-        # self.split_edges()
-        # graph_loader = self.conn.gds.graphLoader(
-        #     num_batches=1,
-        #     v_extra_feats={
-        #         'user': ['name'],
-        #         'subreddit': ['name']
-        #     },
-        #     e_extra_feats={
-        #         "interacted_with": ['is_train', 'is_test'],
-        #         'commented_in': ['is_train', 'is_test']
-        #     },
-        #     output_format = 'PyG'
-        # )
-        # self.data = graph_loader.data
+
+        graph_loader = self.conn.gds.graphLoader(
+            num_batches=1,
+            v_extra_feats={
+                'user': ['is_train', 'is_test'],
+                'subreddit': ['is_train', 'is_test']
+            },
+            e_extra_feats={
+                "interacted_with": ['is_train', 'is_test'],
+                'commented_in': ['is_train', 'is_test']
+            },
+            output_format = 'PyG'
+        )
+        self.data = graph_loader.data
         # self.num_users = self.data['user'].name.shape[0]
         # self.num_subreddits = self.data['subreddit'].name.shape[0]
         # self.num_nodes = self.num_users + self.num_subreddits
@@ -93,82 +94,126 @@ class GCNHandler:
             gsqlSecret=args["gsqlSecret"],
             certPath=args["certPath"]
         )
+
         return conn
+    
+    def generate_secret(self):
+        """generates a secret key for TigerGraph authentication.
+        """
+        with open(self.config_path, "r") as config:
+            args = json.load(config)
+        self.conn.getToken(args['gsqlSecret'])
 
     def set_model(self, hp):
-        self.gcn = LightGCN(self.num_nodes, hp['embedding_dim'], hp['num_layers'], hp['dropout'])
-        self.optimizer = torch.optim.Adam(self.gcn.parameters(), lr=hp["lr"], weight_decay=hp["l2_penalty"])
-        self.hp = hp
-        self.model_set = True
+        # self.gcn = LightGCN(self.num_nodes, hp['embedding_dim'], hp['num_layers'], hp['dropout'])
+        # self.optimizer = torch.optim.Adam(self.gcn.parameters(), lr=hp["lr"], weight_decay=hp["l2_penalty"])
+        # self.hp = hp
+        # self.model_set = True
+
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        self.model = GCN(
+            in_channels=1433,
+            hidden_channels=hp["hidden_dim"],
+            num_layers=hp["num_layers"],
+            out_channels=2,
+            dropout=hp["dropout"],
+        ).to(self.device)
+
+        self.optimizer = torch.optim.Adam(
+            self.model.parameters(), lr=hp["lr"], weight_decay=hp["l2_penalty"]
+        )
 
     def train(self, plot=True):
 
-        if not self.model_set:
-            raise Exception('Must set the model before training.')
+        # if not self.model_set:
+        #     raise Exception('Must set the model before training.')
 
-        metrics = {}
-        metrics["loss_lgcn_train"]=[] 
-        metrics["loss_lgcn_val"]=[]
-        metrics["recall_k_val"]=[]
-        metrics["precision_k_val"]=[]
+        # metrics = {}
+        # metrics["loss_lgcn_train"]=[] 
+        # metrics["loss_lgcn_val"]=[]
+        # metrics["recall_k_val"]=[]
+        # metrics["precision_k_val"]=[]
 
-        for epoch in trange(12):
-            self.gcn.train()
-            # Negative sampling. Randomly permute items to get negative user 
-            # item edges.
-            neg_edges = self.train_user_item.clone().detach()
-            neg_edges[1] = neg_edges[1][torch.randperm(neg_edges.shape[1])] + self.num_users
-            # Forward pass. Encode + decode
-            h = self.lightgcn.encode(self.train_edge_index)
-            pos_scores = self.gcn.decode(h, self.train_edge_index[:, :self.train_user_item.shape[1]])
-            neg_scores = self.gcn.decode(h, neg_edges)
-            # Loss and backprop
-            loss = self.gcn.bpr_loss(pos_scores, neg_scores)
+        # for epoch in trange(12):
+        #     self.gcn.train()
+        #     # Negative sampling. Randomly permute items to get negative user 
+        #     # item edges.
+        #     neg_edges = self.train_user_item.clone().detach()
+        #     neg_edges[1] = neg_edges[1][torch.randperm(neg_edges.shape[1])] + self.num_users
+        #     # Forward pass. Encode + decode
+        #     h = self.lightgcn.encode(self.train_edge_index)
+        #     pos_scores = self.gcn.decode(h, self.train_edge_index[:, :self.train_user_item.shape[1]])
+        #     neg_scores = self.gcn.decode(h, neg_edges)
+        #     # Loss and backprop
+        #     loss = self.gcn.bpr_loss(pos_scores, neg_scores)
+        #     self.optimizer.zero_grad()
+        #     loss.backward()
+        #     self.optimizer.step()
+        #     # Logging
+        #     metrics["loss_lgcn_train"].append(loss.item())
+            
+        #     # Evaluate
+        #     self.gcn.eval()
+        #     neg_edges = self.test_edge_index.clone().detach()
+        #     neg_edges[1]=neg_edges[1][torch.randperm(neg_edges.shape[1])]
+        #     with torch.no_grad():
+        #         # Loss
+        #         pos_scores = self.gcn.decode(h, self.test_edge_index)
+        #         neg_scores = self.gcn.decode(h, neg_edges) 
+        #         loss = self.gcn.bpr_loss(pos_scores, neg_scores)
+        #         metrics["loss_lgcn_val"].append(loss.item())
+        #         # Recall at k
+        #         # Get recommendations using the current model
+        #         recs = self.gcn.recommend(embedding=h, 
+        #                                 src_index=self.test_users, 
+        #                                 dst_index=torch.arange(self.num_users, self.num_nodes), 
+        #                                 k=self.hp["topk"], 
+        #                                 history=self.user_item_history)
+        #         # Convert the recommendations to a sparse matrix
+        #         recs = ssp.csr_matrix((np.ones(recs.shape[0]*recs.shape[1]),
+        #                             recs.flatten() - self.num_users,
+        #                             np.arange(0, recs.shape[0] * recs.shape[1] + 1, self.hp["topk"])),
+        #                             shape=(len(self.test_users), self.num_items))
+        #         metrics["recall_k_val"].append(
+        #             (recs.multiply(self.test_user_item_sparse).sum(axis=1) / self.test_user_item_sparse.sum(axis=1)).mean())
+        #         metrics["precision_k_val"].append(
+        #             (recs.multiply(self.test_user_item_sparse).sum(axis=1) / self.hp["topk"]).mean())
+        
+        # if plot:
+        #     fig,ax = plt.subplots(3,1, figsize=(10,9))
+        #     ax[0].plot(metrics["loss_lgcn_train"], label="Train");
+        #     ax[0].plot(metrics["loss_lgcn_val"], label="Valid");
+        #     ax[0].set_ylabel("Loss", fontsize=12)
+        #     ax[0].legend();
+        #     ax[1].plot(metrics["recall_k_val"], color="C1");
+        #     ax[1].set_ylabel("Recall at {}".format(self.hp["topk"]), fontsize=12);
+        #     ax[1].set_xlabel("Step", fontsize=12);
+        #     ax[2].plot(metrics["precision_k_val"], color="C1");
+        #     ax[2].set_ylabel("Precision at {}".format(self.hp["topk"]), fontsize=12);
+        #     ax[2].set_xlabel("Step", fontsize=12);
+
+        data = self.data.to(self.device)
+        for epoch in range(20):
+            # Train
+            self.model.train()
+            acc = torch.Accuracy()
+            # Forward pass
+            out = self.model(data.x, data.edge_index)
+            # Calculate loss
+            loss = F.cross_entropy(out[data.train_mask], data.y[data.train_mask])
+            # Backward pass
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
-            # Logging
-            metrics["loss_lgcn_train"].append(loss.item())
-            
             # Evaluate
-            self.gcn.eval()
-            neg_edges = self.test_edge_index.clone().detach()
-            neg_edges[1]=neg_edges[1][torch.randperm(neg_edges.shape[1])]
+            val_acc = torch.Accuracy()
             with torch.no_grad():
-                # Loss
-                pos_scores = self.gcn.decode(h, self.test_edge_index)
-                neg_scores = self.gcn.decode(h, neg_edges) 
-                loss = self.gcn.bpr_loss(pos_scores, neg_scores)
-                metrics["loss_lgcn_val"].append(loss.item())
-                # Recall at k
-                # Get recommendations using the current model
-                recs = self.gcn.recommend(embedding=h, 
-                                        src_index=self.test_users, 
-                                        dst_index=torch.arange(self.num_users, self.num_nodes), 
-                                        k=self.hp["topk"], 
-                                        history=self.user_item_history)
-                # Convert the recommendations to a sparse matrix
-                recs = ssp.csr_matrix((np.ones(recs.shape[0]*recs.shape[1]),
-                                    recs.flatten() - self.num_users,
-                                    np.arange(0, recs.shape[0] * recs.shape[1] + 1, self.hp["topk"])),
-                                    shape=(len(self.test_users), self.num_items))
-                metrics["recall_k_val"].append(
-                    (recs.multiply(self.test_user_item_sparse).sum(axis=1) / self.test_user_item_sparse.sum(axis=1)).mean())
-                metrics["precision_k_val"].append(
-                    (recs.multiply(self.test_user_item_sparse).sum(axis=1) / self.hp["topk"]).mean())
-        
-        if plot:
-            fig,ax = plt.subplots(3,1, figsize=(10,9))
-            ax[0].plot(metrics["loss_lgcn_train"], label="Train");
-            ax[0].plot(metrics["loss_lgcn_val"], label="Valid");
-            ax[0].set_ylabel("Loss", fontsize=12)
-            ax[0].legend();
-            ax[1].plot(metrics["recall_k_val"], color="C1");
-            ax[1].set_ylabel("Recall at {}".format(self.hp["topk"]), fontsize=12);
-            ax[1].set_xlabel("Step", fontsize=12);
-            ax[2].plot(metrics["precision_k_val"], color="C1");
-            ax[2].set_ylabel("Precision at {}".format(self.hp["topk"]), fontsize=12);
-            ax[2].set_xlabel("Step", fontsize=12);
+                pred = out.argmax(dim=1)
+                acc.update(pred[data.train_mask], data.y[data.train_mask])
+                valid_loss = F.cross_entropy(out[data.val_mask], data.y[data.val_mask])
+                val_acc.update(pred[data.val_mask], data.y[data.val_mask])
+
 
     def split_vertices(self, train=.9, test=.1):
         splitter = self.conn.gds.vertexSplitter(is_train=train, is_test=test)
