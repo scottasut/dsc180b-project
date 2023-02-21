@@ -4,6 +4,7 @@ import torch_geometric
 import scipy.sparse as ssp
 import numpy as np
 from torch_geometric.utils import coalesce
+from torch_geometric.typing import Adj
 from tqdm.auto import trange
 import json
 import matplotlib.pyplot as plt
@@ -14,54 +15,64 @@ class GCNHandler:
         self.conn = self.connection()
         self.f = self.conn.gds.featurizer()
         self.generate_secret()
-        graph_loader = self.conn.gds.graphLoader(
-            num_batches=1,
-            v_extra_feats={
-                'user': ['name'],
-                'subreddit': ['name']
-            },
-            e_extra_feats={
-                "interacted_with": ['is_train', 'is_test'],
-                'commented_in': ['is_train', 'is_test']
-            },
-            output_format = 'PyG'
-        )
-        self.data = graph_loader.data
-        self.num_users = self.data['user'].name.shape[0]
-        self.num_subreddits = self.data['subreddit'].name.shape[0]
-        self.num_nodes = self.num_users + self.num_subreddits
-        # Get user-item bi-adjacency matrix for testing
-        self.test_user_item = coalesce(self.data["commented_in"]["edge_index"][:, self.data["commented_in"].is_test])
-        # Convert the bi-adjacency matrix to the adjacency matrix of a unipartite graph. 
-        # Items are indexed after users. This step is needed because LightGCN only supports unipartite graph.
-        self.test_edge_index = self.test_user_item.clone().detach()
-        self.test_edge_index[1] = self.test_edge_index[1] + self.num_users
-        # Get test users.
-        self.test_users = self.test_user_item[0].unique()
-        # Convert the bi-adjacency matrix to a sparse matrix for computations later.
-        test_user_item_sparse = ssp.coo_matrix((np.ones(self.test_user_item.shape[1]),
-                                                self.test_user_item), 
-                                            shape=(self.num_users, self.num_subreddits)).tocsr()
-        self.test_user_item_sparse = test_user_item_sparse[self.test_users]
+        # self.split_vertices()
+        # self.split_edges()
+        # graph_loader = self.conn.gds.graphLoader(
+        #     num_batches=1,
+        #     v_extra_feats={
+        #         'user': ['name'],
+        #         'subreddit': ['name']
+        #     },
+        #     e_extra_feats={
+        #         "interacted_with": ['is_train', 'is_test'],
+        #         'commented_in': ['is_train', 'is_test']
+        #     },
+        #     output_format = 'PyG'
+        # )
+        # self.data = graph_loader.data
+        # self.num_users = self.data['user'].name.shape[0]
+        # self.num_subreddits = self.data['subreddit'].name.shape[0]
+        # self.num_nodes = self.num_users + self.num_subreddits
+        # # Get user-item bi-adjacency matrix for testing
+        # self.test_user_item = coalesce(self.data["commented_in"]["edge_index"][:, self.data["commented_in"].is_test])
+        # # Convert the bi-adjacency matrix to the adjacency matrix of a unipartite graph. 
+        # # Items are indexed after users. This step is needed because LightGCN only supports unipartite graph.
+        # self.test_edge_index = self.test_user_item.clone().detach()
+        # self.test_edge_index[1] = self.test_edge_index[1] + self.num_users
+        # # Get test users.
+        # self.test_users = self.test_user_item[0].unique()
+        # # Convert the bi-adjacency matrix to a sparse matrix for computations later.
+        # test_user_item_sparse = ssp.coo_matrix((np.ones(self.test_user_item.shape[1]),
+        #                                         self.test_user_item), 
+        #                                     shape=(self.num_users, self.num_subreddits)).tocsr()
+        # self.test_user_item_sparse = test_user_item_sparse[self.test_users]
 
-        # Get user-item bi-adjacency matrix for training
-        self.train_user_item = coalesce(self.data["commented_in"]["edge_index"][:, self.data["commented_in"].is_train])
-        # Convert the bi-adjacency matrix to the adjacency matrix of a unipartite graph. 
-        # Items are indexed after users. This step is needed because LightGCN only supports unipartite graph.
-        self.train_edge_index = self.train_user_item.clone().detach()
-        self.train_edge_index[1] = self.train_edge_index[1] + self.num_users
-        # Make the adjacency matrix symmetric.
-        self.train_edge_index = torch.cat((self.train_edge_index, self.train_edge_index[[1,0]]), dim=1)
-        # Convert the user-item bi-adjacency matrix to a sparse matrix for easier computation later.
-        self.user_item_history = ssp.coo_matrix((np.ones(self.train_user_item.shape[1]), self.train_user_item), 
-                                        shape=(self.num_users, self.num_subreddits)).tocsr()
-        self.user_item_history = self.user_item_history[self.test_users]
-        self.user_item_history = torch.sparse_csr_tensor(self.user_item_history.indptr, 
-                                                    self.user_item_history.indices, 
-                                                    self.user_item_history.data, 
-                                                    size=self.user_item_history.shape)
-        self.model_set = False
+        # # Get user-item bi-adjacency matrix for training
+        # self.train_user_item = coalesce(self.data["commented_in"]["edge_index"][:, self.data["commented_in"].is_train])
+        # # Convert the bi-adjacency matrix to the adjacency matrix of a unipartite graph. 
+        # # Items are indexed after users. This step is needed because LightGCN only supports unipartite graph.
+        # self.train_edge_index = self.train_user_item.clone().detach()
+        # self.train_edge_index[1] = self.train_edge_index[1] + self.num_users
+        # # Make the adjacency matrix symmetric.
+        # self.train_edge_index = torch.cat((self.train_edge_index, self.train_edge_index[[1,0]]), dim=1)
+        # # Convert the user-item bi-adjacency matrix to a sparse matrix for easier computation later.
+        # self.user_item_history = ssp.coo_matrix((np.ones(self.train_user_item.shape[1]), self.train_user_item), 
+        #                                 shape=(self.num_users, self.num_subreddits)).tocsr()
+        # self.user_item_history = self.user_item_history[self.test_users]
+        # self.user_item_history = torch.sparse_csr_tensor(self.user_item_history.indptr, 
+        #                                             self.user_item_history.indices, 
+        #                                             self.user_item_history.data, 
+        #                                             size=self.user_item_history.shape)
+        # self.model_set = False
     
+    def split_vertices(self, train=.9, test=.1):
+        splitter = self.conn.gds.vertexSplitter(is_train=train, is_test=test)
+        splitter.run()
+
+    def split_edges(self, train=.9, test=.1):
+        splitter = self.conn.gds.edgeSplitter(is_train=train, is_test=test)
+        splitter.run()
+
     def connection(self):
         """Establishes a connetion to TigerGraph using credentials which should be in config.json
 
@@ -82,9 +93,6 @@ class GCNHandler:
             gsqlSecret=args["gsqlSecret"],
             certPath=args["certPath"]
         )
-
-        if not self._connected(conn):
-            raise ConnectionError("Failed to connect to GSQL")
         return conn
 
     def set_model(self, hp):
@@ -172,7 +180,7 @@ class GCNHandler:
 
 
 class LightGCN(torch_geometric.nn.models.LightGCN):           
-    def encode(self, edge_index: torch.Adj, 
+    def encode(self, edge_index: Adj, 
                nodes: torch.Tensor = None) -> torch.Tensor:
         if nodes:
             x = self.embedding(nodes)
@@ -184,13 +192,13 @@ class LightGCN(torch_geometric.nn.models.LightGCN):
             out = out + x * self.alpha[i + 1]
         return out
     
-    def decode(self, embedding: torch.Tensor, node_pairs: torch.Adj) -> torch.Tensor:
+    def decode(self, embedding: torch.Tensor, node_pairs: Adj) -> torch.Tensor:
         out_src = embedding[node_pairs[0]]
         out_dst = embedding[node_pairs[1]]
         return (out_src * out_dst).sum(dim=-1)
     
-    def forward(self, edge_index: torch.Adj, nodes: torch.Tensor = None, 
-                node_pairs: torch.Adj = None) -> torch.Tensor:
+    def forward(self, edge_index: Adj, nodes: torch.Tensor = None, 
+                node_pairs: Adj = None) -> torch.Tensor:
         if node_pairs is None:
             node_pairs = edge_index
         embed = self.encode(edge_index, nodes)
