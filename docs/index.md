@@ -33,9 +33,7 @@ title: Interaction Graph-based Reddit Community Recommendation
 
 ## Future Work & Next Steps
 
-<h2 style="color:green">
-    Markdown inline css styles\
-    
-    Future Work and next steps
+<h2 style="color:(255, 69, 0)">
+    Markdown inline css styles
 </h2>
 
