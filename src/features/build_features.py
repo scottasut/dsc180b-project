@@ -2,7 +2,7 @@ import os
 import pandas as pd
 # from keybert import KeyBERT
 import nltk
-nltk.download('punkt');
+nltk.download('punkt', quiet=True)
 from rake_nltk import Rake
 import yake
 import logging
@@ -19,6 +19,9 @@ USER_OUT_PATH = 'data/out/user.csv'
 VALID_EXTRACTORS = ['keybert', 'rake', 'yake']
 
 def extract_keywords(text: str, n: int, how: str) -> list:
+
+    log.info('Keyword extraction task entry using {} with n={}'.format(how, n))
+
     if how.lower() not in VALID_EXTRACTORS:
         raise ValueError('Argument \'how\' must be one of {}'.format(VALID_EXTRACTORS))
 
@@ -47,13 +50,15 @@ def extract_keywords(text: str, n: int, how: str) -> list:
                     results.append(keyword) 
         return ' '.join(results)
 
+    log.info('Keyword extraction task entry using {} with n={}'.format(how, n))
+
     # if how == 'keybert':
     #     return bert_extractor()
     # el
     if how == 'rake':
         return rake_extractor()
     else:
-        return yake_extractor() 
+        return yake_extractor()
 
 def generate_features() -> None:
     """Generates features from temporary data
@@ -61,10 +66,14 @@ def generate_features() -> None:
     The only feature we generate are keywords from a user's corpus.
     """
 
+    log.info('Feature generation task entry.')
+
     if not os.path.exists(USER_TEMP_PATH):
         raise FileNotFoundError('Unable to find needed file {}.'.format(USER_TEMP_PATH))
 
     users = pd.read_csv(USER_TEMP_PATH)
     users.columns = ['user', 'corpus']
-    users['corpus'] = users['corpus'].apply(lambda x: extract_keywords(x, 10, 'rake'))
+    users['corpus'] = users['corpus'].apply(lambda x: extract_keywords(x, 10, 'yake'))
     users.to_csv(USER_OUT_PATH, index=False, header=False)
+
+    log.info('Feature generation task exit.')
