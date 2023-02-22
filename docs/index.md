@@ -4,7 +4,6 @@ title: Interaction Graph-based Reddit Community Recommendation
 ---
 <style>
 .heading {
-    color: red;
     font-family: Verdana sans-serif;
     color: rgb(255, 69, 0);
 }
