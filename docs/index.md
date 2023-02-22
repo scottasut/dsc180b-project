@@ -2,8 +2,15 @@
 layout: default
 title: Interaction Graph-based Reddit Community Recommendation
 ---
+<style>
+.heading1 {
+    color: red;
+    font-weight:700;
+    font-size: 35px;
+}
+</style>
 
-# Interaction Graph-based Reddit Community Recommendation
+# Interaction Graph-based Reddit Community Recommendation {#identifier .heading1}
 ## Overview
 
 ## Methodologies
