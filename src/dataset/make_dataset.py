@@ -18,9 +18,9 @@ GENERIC_LOCAL_PATH  = 'data/raw/RC_{}-{}.zst'
 
 # Processed data paths:
 USER_PATH           = 'data/temp/user.csv'           # User vertices
-SUBREDDIT_PATH      = 'data/temp/subreddit.csv'      # Subreddit vertices
-USER_USER_PATH      = 'data/temp/user_user.csv'      # User to user edges
-USER_SUBREDDIT_PATH = 'data/temp/user_subreddit.csv' # User to subreddit edges
+SUBREDDIT_PATH      = 'data/out/subreddit.csv'      # Subreddit vertices
+USER_USER_PATH      = 'data/out/user_user.csv'      # User to user edges
+USER_SUBREDDIT_PATH = 'data/out/user_subreddit.csv' # User to subreddit edges
 
 DELETED_USER = '[deleted]'
 
@@ -76,6 +76,8 @@ def process_data(year: str, month: str) -> None:
     download(remote_path, local_path)
 
     # Process the data
+    print('Processing data...')
+
     data = {}
     comment_user_map = {}
     user_data, subreddit_data = {}, set()
@@ -150,6 +152,8 @@ def process_data(year: str, month: str) -> None:
     users.to_csv(USER_PATH, index=False, header=False)
     users_users.to_csv(USER_USER_PATH, index=False, header=False)
     users_subreddits.to_csv(USER_SUBREDDIT_PATH, index=False, header=False)
+
+    print('Processing data complete.')
 
     log.info('data processing task exit for year: {}, month: {}'.format(year, month))
 

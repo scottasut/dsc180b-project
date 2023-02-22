@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import random
 from sklearn.neighbors import NearestNeighbors
-from src.models.popular_recommender import PopularRecommender
+from src.models.baselines import PopularRecommender
 import sys
 import logging
 sys.path.append('../')
