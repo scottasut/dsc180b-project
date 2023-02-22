@@ -2,14 +2,8 @@
 layout: default
 title: Interaction Graph-based Reddit Community Recommendation
 ---
-<style>
-.heading {
-    font-family: Verdana sans-serif;
-    color: rgb(255, 69, 0);
-}
-</style>
 
-# Interaction Graph-based Reddit Community Recommendation{#identifier .heading}
+# Interaction Graph-based Reddit Community Recommendation
 ## Overview
 
 ## Methodologies
@@ -40,6 +34,8 @@ title: Interaction Graph-based Reddit Community Recommendation
 ## Future Work & Next Steps
 
 <h2 style="color:green">
-    Markdown inline css styles
+    Markdown inline css styles\
+    
+    Future Work and next steps
 </h2>
 
