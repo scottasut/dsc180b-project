@@ -1,0 +1,8 @@
+{
+    "host": "https://ucsd-reddit.i.tgcloud.io",
+    "graphname": "Test",
+    "username": "user",
+    "password": "scottsut@live.com",
+    "gsqlSecret": "D2o3o5n#",
+    "certPath": "C:\\Users\\Scott\\.gsql\\my-cert.txt"
+}
