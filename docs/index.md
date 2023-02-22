@@ -10,7 +10,7 @@ title: Interaction Graph-based Reddit Community Recommendation
 }
 </style>
 
-# Interaction Graph-based Reddit Community Recommendation {#identifier .heading1}
+# Interaction Graph-based Reddit Community Recommendation {.heading1}
 ## Overview
 
 ## Methodologies
