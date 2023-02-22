@@ -9,12 +9,14 @@ logging.basicConfig(filename='log.txt',
 
 sys.path.insert(0, 'src')
 
-from dataset.create_dataset import build_graph, build_test_set
+from dataset.make_dataset import process_data
+from features.build_features import generate_features
 
 def main(targets):
     if 'data' in targets:
-        build_graph()
-        build_test_set()
+        process_data(2010, 12)
+    if 'features' in targets:
+        generate_features()
     if 'test' in targets:
         pass
 
