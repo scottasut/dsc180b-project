@@ -9,7 +9,8 @@ title: Interaction Graph-based Reddit Community Recommendation
     color: rgb(255, 69, 0);
 }
 </style>
-# Interaction Graph-based Reddit Community Recommendation {#identifier .heading}
+
+# Interaction Graph-based Reddit Community Recommendation{#identifier .heading}
 ## Overview
 
 ## Methodologies
