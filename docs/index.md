@@ -32,3 +32,7 @@ title: Interaction Graph-based Reddit Community Recommendation
 
 ## Future Work & Next Steps
 
+<div style="color:green">
+    Markdown inline css styles
+</div>
+
