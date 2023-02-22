@@ -1,7 +1,8 @@
+import os
 import pandas as pd
 # from keybert import KeyBERT
 import nltk
-nltk.download('punkt')
+nltk.download('punkt');
 from rake_nltk import Rake
 import yake
 import logging
@@ -59,6 +60,10 @@ def generate_features() -> None:
 
     The only feature we generate are keywords from a user's corpus.
     """
+
+    if not os.path.exists(USER_TEMP_PATH):
+        raise FileNotFoundError('Unable to find needed file {}.'.format(USER_TEMP_PATH))
+
     users = pd.read_csv(USER_TEMP_PATH)
     users.columns = ['user', 'corpus']
     users['corpus'] = users['corpus'].apply(lambda x: extract_keywords(x, 10, 'rake'))

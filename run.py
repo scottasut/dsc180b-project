@@ -15,8 +15,14 @@ from features.build_features import generate_features
 def main(targets):
     if 'data' in targets:
         process_data(2010, 12)
+        
     if 'features' in targets:
-        generate_features()
+        try:
+            generate_features()
+        except FileNotFoundError:
+            print('Unable to find data files for feature generation. Please try running \'data\' target first.')
+            sys.exit(-1)
+    
     if 'test' in targets:
         pass
 
