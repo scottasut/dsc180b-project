@@ -29,10 +29,10 @@ class PopularRecommender:
         self._users = set()
         subreddit_counts = {}
         for d in data:
-            if len(d) != 2:
+            if len(d) < 2:
                 log.exception('initialization attempt with unexpected input data. Expected: (user, subreddit), Got: {}'.format(d))
                 raise ValueError('Elements of \'data\' should be tuples of the following format: (user, subreddit)')
-            u, sr = d
+            u, sr = d[:2]
             self._users.add(u)
             if u not in self._interacted_in:
                 self._interacted_in[u] = set()

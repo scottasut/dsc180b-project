@@ -11,7 +11,7 @@ logging.basicConfig(filename='log.txt',
 
 sys.path.insert(0, 'src')
 
-from dataset.make_dataset import process_data
+from dataset.make_dataset import process_data, build_test_set
 from features.build_features import generate_features
 
 def load_config(path: str, required_params: list) -> dict:
@@ -33,6 +33,7 @@ def main(targets: list):
 
     if 'data' in targets:
         process_data(setup_config['year'], setup_config['month'])
+        # build_test_set(2011, 12)
         
     if 'features' in targets:
         # try:

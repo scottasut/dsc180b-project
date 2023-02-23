@@ -3,6 +3,7 @@ import json
 import os
 import logging
 import sys
+import pandas as pd
 sys.path.append('../')
 from util.logger_util import configure_logger
 sys.path.append('dataset')
@@ -158,19 +159,19 @@ def build_test_set():
     test_interactions = {}
     cids = set()
 
-    comments_to_subreddit = {}
-    users_to_subreddit = {}
-    with open(USER_COMMENT_PATH) as ucf, open(COMMENT_PATH) as cf:
-        for l in cf.readlines():
-            c, sr, _, _ = l.split(',')
-            comments_to_subreddit[c] = sr
+    # comments_to_subreddit = {}
+    users_to_subreddit = pd.read_csv('')
+    # with open(USER_COMMENT_PATH) as ucf, open(COMMENT_PATH) as cf:
+    #     for l in cf.readlines():
+    #         c, sr, _, _ = l.split(',')
+    #         comments_to_subreddit[c] = sr
 
-        for l in ucf.readlines():
-            u, c = l.split(',')
-            cids.add(u)
-            if u not in users_to_subreddit:
-                users_to_subreddit[u] = set()
-            users_to_subreddit[u].add(comments_to_subreddit[c.strip()])
+    #     for l in ucf.readlines():
+    #         u, c = l.split(',')
+    #         cids.add(u)
+    #         if u not in users_to_subreddit:
+    #             users_to_subreddit[u] = set()
+    #         users_to_subreddit[u].add(comments_to_subreddit[c.strip()])
     
     log.info('parsing {}'.format(LOCAL_TEST_COMMENT_DATA_PATH))
     with open(LOCAL_TEST_COMMENT_DATA_PATH, 'rb') as f:

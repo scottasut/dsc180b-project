@@ -23,17 +23,7 @@ class RedditGraph():
         self.conn = self.connection()
         self.f = self.conn.gds.featurizer()
         self.generate_secret()
-        data = []
-        comments_to_subreddit = {}
-        with open('../data/out/users_comments.csv') as ucf, open('../data/out/comments.csv') as cf:
-            for l in cf.readlines():
-                c, sr, _, _ = l.split(',')
-                comments_to_subreddit[c] = sr
-
-            for l in ucf.readlines():
-                u, c = l.split(',')
-                data.append((u, comments_to_subreddit[c.strip()]))
-        df = pd.DataFrame(data, columns=['user', 'subreddit'])
+        df = pd.read_csv('../data/out/user_subreddit.csv')
         self._popular_recommender = PopularRecommender(df)
     
     def connection(self):
@@ -265,11 +255,19 @@ class RedditGraph():
             return recommendations
     
     def fit_knn(self, v_type: str, k=1):
-        df = self.conn.getVertexDataFrame(v_type, select='embeddings')
+        df = self.conn.getVertexDataFrame(v_type, select='fastrp_embedding')
+        df = pd.concat([df['v_id'].to_frame(), df['fastrp_embedding'].apply(pd.Series)], axis=1)
+        df.columns = ['v_id', 'pagerank', 'louvain', 'label_prop', 'degree']
+        embeddings = pd.read_csv('../data/out/user.csv', header=None)
+        embeddings = embeddings.rename(columns={0:'v_id'})
+        embeddings['v_id'] = embeddings['v_id'].astype(str)
+        df['v_id'] = df['v_id'].astype(str)
+        print(len(df), len(embeddings))
+        df = df.merge(embeddings, on='v_id', how='inner')
         users = df['v_id']
+        df = df.drop(columns=['v_id'])
+        print(len(df))
         self._knn_user_idx_map = {i:u for i, u in zip(range(len(users)), users)}
-        df = df['embeddings'].apply(pd.Series)
-        df.columns = ['pagerank', 'louvain', 'label_prop', 'degree']
         self._knn_embeddings = df
         self._knn_embeddings.index = users
         self._knn = NearestNeighbors(metric='cosine', algorithm='brute', n_neighbors=k+1, n_jobs=-1).fit(df)
@@ -394,8 +392,8 @@ class RedditGraph():
         }
         results = self.conn.runInstalledQuery("get_subreddits", params=parameters)
         subs = set()
-        for comment in results[0]['comments']:
-            subs.add(comment['attributes']['comments.subreddit'])
+        for comment in results[0]['subs']:
+            subs.add(comment['attributes']['subs.name'])
         return subs
 
     def get_neighboring_subreddits(self, user):

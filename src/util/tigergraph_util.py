@@ -1,9 +1,5 @@
 import pyTigerGraph as tg
 import json
-import logging
-from logger_util import configure_logger
-configure_logger('../log.txt')
-log = logging.getLogger(__name__)
 
 def connection(config_path: str):
     """Establishes and returns a TigerGraph connection according to credentials
@@ -28,16 +24,23 @@ def connection(config_path: str):
     conn.getToken(args['gsqlSecret'])
     return conn
     
-def load_graph(conn: tg.TigerGraphConnection, num_batches: int):
+def load_graph(conn: tg.TigerGraphConnection, batch_size: int):
     """Loads a TigerGraph graph in batches for model training. Assumes schema used for this
     project.
 
     Args:
         conn (pyTigerGraph.TigerGraphConnection): A TigerGraph connection
-        num_batches (int): number of batches to load data in
+        batch_size (int): size of batches to load data in
     """
     return conn.gds.graphLoader(
-        num_batches=num_batches,
+        batch_size=batch_size,
+        v_in_feats={
+            'user': ['fastrp_embedding']
+        },
+        e_in_feats={
+            'interacted_with': ['times'],
+            'commented_in': ['times']
+        },
         v_extra_feats={
             'user': ['is_train', 'is_test'],
             'subreddit': ['is_train', 'is_test']

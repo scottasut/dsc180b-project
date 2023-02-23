@@ -17,10 +17,11 @@ GENERIC_REMOTE_PATH = 'https://files.pushshift.io/reddit/comments/RC_{}-{}.zst'
 GENERIC_LOCAL_PATH  = 'data/raw/RC_{}-{}.zst'
 
 # Processed data paths:
-USER_PATH           = 'data/temp/user.csv'           # User vertices
-SUBREDDIT_PATH      = 'data/out/subreddit.csv'      # Subreddit vertices
-USER_USER_PATH      = 'data/out/user_user.csv'      # User to user edges
-USER_SUBREDDIT_PATH = 'data/out/user_subreddit.csv' # User to subreddit edges
+USER_PATH              = 'data/temp/user.csv'             # User vertices
+SUBREDDIT_PATH         = 'data/out/subreddit.csv'         # Subreddit vertices
+USER_USER_PATH         = 'data/out/user_user.csv'         # User to user edges
+USER_SUBREDDIT_PATH    = 'data/out/user_subreddit.csv'    # User to subreddit edges
+TEST_INTERACTIONS_PATH = 'data/out/test_interactions.csv' # User to subreddit interactions for testing
 
 DELETED_USER = '[deleted]'
 
@@ -158,3 +159,48 @@ def process_data(year: str, month: str) -> None:
     log.info('data processing task exit for year: {}, month: {}'.format(year, month))
 
 
+def build_test_set(year: str, month: str) -> None:
+
+    log.info('test data generation task entry.')
+
+    # Fetch the data
+    remote_path = GENERIC_REMOTE_PATH.format(year, month)
+    local_path = GENERIC_LOCAL_PATH.format(year, month)
+    download(remote_path, local_path)
+
+    users_to_subreddit = pd.read_csv(USER_SUBREDDIT_PATH, header=None)
+    users_to_subreddit.columns = ['user', 'subreddit', 'times']
+    user_set = set(users_to_subreddit['user'])
+    subreddit_set = set(users_to_subreddit['subreddit'])
+    users_to_subreddit = users_to_subreddit.drop(columns=['times'])
+    users_to_subreddit = users_to_subreddit.groupby('user').agg(lambda x: set(x))
+    users_to_subreddit = users_to_subreddit.to_dict()['subreddit']
+    user_subreddit = set()
+    
+    log.info('parsing {}'.format(local_path))
+    with open(local_path, 'rb') as f, open(TEST_INTERACTIONS_PATH, 'w') as tif:
+        dctx = zstd.ZstdDecompressor(max_window_size=2147483648)
+        with dctx.stream_reader(f) as reader:
+            previous_line = ""
+            while True:
+                chunk = reader.read(2**24)
+                if not chunk:
+                    break
+
+                string_data = chunk.decode('utf-8')
+                lines = string_data.split('\n')
+                for i, line in enumerate(lines[:-1]):
+                    if i == 0:
+                        line = previous_line + line
+                    comment = json.loads(line)
+                    user = comment['author']
+                    subreddit = comment['subreddit']
+
+                    if (user, subreddit) in user_subreddit:
+                        continue
+
+                    if user in user_set and subreddit in subreddit_set and subreddit not in users_to_subreddit[user]:
+                        tif.write('{},{}\n'.format(user, subreddit))
+                        user_subreddit.add((user, subreddit))
+                        
+                previous_line = lines[-1]

@@ -67,6 +67,16 @@ Project/
 ├─ run.py
 ```
 
+Once all of the data has been downloaded and prepared, you will have the following files:
+
+`user.csv`: contains data on the users in the interaction graph.
+| user  | embedding 1 | embedding 2 | embedding 3 | ... |
+|-------|-------------|-------------|-------------|-----|
+| user1 | 0.123       | -0.123      | 0.555       | ... |
+| user2 | 0.987       | -0.987      | -0.555      | ... |
+| ...   | ...         | ...         | ...         | ... |
+where the 500 embeddings correspond to the word2vec embeddings of the 5 most important keywords which that user used in their comments according to a TF-IDF metric.
+
 ### Graph Schema Using GraphStudio
 
 #### What is a graph schema?
@@ -139,6 +149,9 @@ Once you have done this, follow these steps:
 *Kaggle* - [This](https://github.com/Kaggle/kaggle-api#api-credentials) guide is helpful. Once you have your `kaggle.json` file, place it at `~/.kaggle`. If this directory does not exist (it likely will not), please create it first.
 
 In order to help guide the users and subreddits we wanted to include, we used the following dataset: https://www.kaggle.com/datasets/timschaum/subreddit-recommender?select=subreddit_info.csv -->
+
+## Some important notes:
+- Your TigerGraph cluster must be on when calling any of the functions here which use `pyTigerGraph` otherwise a connection will not be able to be established. If you are experiencing connection errors, ensure that the cluster you are using is indeed turned on.
 
 ## Resources:
 - [Reddit API](https://www.reddit.com/dev/api/)
