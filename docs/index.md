@@ -16,7 +16,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
 
 ## Overview {: .heading1}
 <!-- background-color:#B8B8B8 -->
-<div style="background-color:gray;border-radius: 10px;padding-left:5px;color:white">
+<div style="background-color:white;border-radius: 10px;padding-left:5px;color:black">
     <h2 style="color:white"> Methodologies </h2>
         Sample Text
     <h3 style="color:white"> Data Preparation </h3>
