@@ -11,12 +11,12 @@ div.main {
 }
 
 div.blank {
-  border-left:5px solid #ffffff;
+  border-left:5px solid #FFF;
 }
 
 div.b {
   background-color:white;
   text-indent:20px;
   color:black;
-  border-left: 5px solid #cccbcb;
+  border-left: 5px solid #AAA;
 }
