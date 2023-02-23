@@ -10,7 +10,9 @@ title: Interaction Graph-based Reddit Community Recommendation
 }
 </style>
 
-# Interaction Graph-based Reddit Community Recommendation
+<h1 style="color:#ff4500">
+    Interaction Graph-based Reddit Community Recommendation
+</h1>
 ## Overview
 
 ## Methodologies
