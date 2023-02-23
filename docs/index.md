@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Interaction Graph-based Reddit Community Recommendation
+<!-- title: Interaction Graph-based Reddit Community Recommendation -->
 ---
 <style>
 .heading1 {
