@@ -10,7 +10,7 @@ layout: default
 }
 </style>
 
-<title>
+<title style="color:#ff4500">
     Interaction Graph-based Reddit Community Recommendation
 </title>
 
