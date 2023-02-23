@@ -10,6 +10,10 @@ title: Interaction Graph-based Reddit Community Recommendation
 }
 </style>
 
+<title>
+    Interaction Graph-based Reddit Community Recommendation
+</title>
+
 <h1 style="color:#ff4500">
     Interaction Graph-based Reddit Community Recommendation
 </h1>
