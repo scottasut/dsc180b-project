@@ -9,51 +9,43 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
     font-size: 35px;
 }
 </style>
-
-<h1 style="color:#ff4500">
-    Interaction Graph-based Reddit Community Recommendation
-</h1>
-
 ## Overview {: .heading1}
+
+
 <!-- background-color:#B8B8B8 -->
-<div style="background-color:white;border-radius: 10px;padding-left:5px;color:black">
-    <h2 style="color:white"> Methodologies </h2>
+<div style="background-color:white;border-radius: 10px;padding-left:10px;color:black">
+    <h2 style="color:#ff4500"> Data Preparation </h2>
         Sample Text
-    <h3 style="color:white"> Data Preparation </h3>
-        Sample Text
-    <h4 style="color:white"> Data Analysis </h4>
+    <h2 style="color:#ff4500"> Exploratory Data Analysis </h2>
         Sample Text
 </div>
 
+<div style="background-color:white;border-radius: 10px;padding-left:10px;color:black">
+    <h2 style="color:#ff4500"> Baselines </h2>
+    <h3 style="color:#ff4500"> Non-Graph Algorithms </h3>
+        Sample Text
+    <h3 style="color:#ff4500"> Centrality Algorithms </h3>
+        Sample Text
+    <h3 style="color:#ff4500"> Community Detection Algorithms </h3>
+        Sample Text
+    <h3 style="color:#ff4500"> Network Statistics K-Means Model </h3>
+        Sample Text
+</div>
 
-## Methodologies
-### Data Preparation
+<div style="background-color:white;border-radius: 10px;padding-left:10px;color:black">
+    <h2 style="color:#ff4500"> Final Model </h2>
+        Sample Text
+</div>
 
-### Data Analysis
+<div style="background-color:white;border-radius: 10px;padding-left:10px;color:black">
+    <h2 style="color:#ff4500"> Results & Evaluation </h2>
+        Sample Text
+</div>
 
-#### Exploratory Data Analysis
-
-#### Baselines
-
-##### Non-graph Algorithms
-
-##### Centrality Algorithms
-
-##### Community Detection Algorithms
-
-##### Network Statistics K-Nearest-Neighbors Model
-
-##### Final model
-
-## Results
-
-### Evaluation Metrics
-
-## Conclusion
-
-## Future Work & Next Steps
-
-<h2 style="color:#ff4500">
-    Future Work & Next Steps
-</h2>
+<div style="background-color:white;border-radius: 10px;padding-left:10px;color:black">
+    <h2 style="color:#ff4500"> Conclusion </h2>
+        Sample Text
+    <h2 style="color:#ff4500"> Future Work & Next Steps </h2>
+        Sample Text
+</div>
 
