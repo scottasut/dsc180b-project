@@ -4,7 +4,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
 ---
 <style>
 .heading1 {
-    color: red;
+    color: green;
     font-weight:700;
     font-size: 35px;
 }
@@ -14,7 +14,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
     Interaction Graph-based Reddit Community Recommendation
 </h1>
 
-## Overview
+## Overview {: .heading1}
 <!-- background-color:#B8B8B8 -->
 <div style="background-color:gray;border-radius: 10px;padding-left:5px;color:white">
     <h2 style="color:white"> Methodologies </h2>
