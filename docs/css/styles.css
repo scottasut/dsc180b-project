@@ -14,5 +14,5 @@ div.a {
   background-color:white;
   text-indent:20px;
   color:black;
-  border-left: 20px solid green;
+  border-left: 10px solid #000;
 }
