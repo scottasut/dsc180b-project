@@ -17,11 +17,11 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
 ## Overview
 <!-- background-color:#B8B8B8 -->
 <div style="background-color:gray;border-radius: 10px;padding-left:5px;color:white">
-    <h2> Methodologies </h2>
+    <h2 style="color:white"> Methodologies </h2>
         Sample Text
-    <h3> Data Preparation </h3>
+    <h3 style="color:white"> Data Preparation </h3>
         Sample Text
-    <h4> Data Analysis </h4>
+    <h4 style="color:white"> Data Analysis </h4>
         Sample Text
 </div>
 
