@@ -1,4 +1,6 @@
 import pandas as pd
+import random
+from sklearn.neighbors import NearestNeighbors
 import sys
 import logging
 sys.path.append('../')
@@ -233,12 +235,6 @@ class CosineKNN:
             list: Subreddit recommendations
         """
         log.info('recommend entry for user {}, n={}, top={}'.format(user, n, top))
-        # user_data = self._data.loc[self._data['user'] == user]
-        # if len(user_data) == 0:
-        #     raise ValueError('user {} does not exist.'.format(user))
-        # ratios = user_data['subreddit'].value_counts().sort_index() / self._data['subreddit'].value_counts().sort_index()
-        # top_subreddits = ratios.dropna().sort_values(ascending=False).iloc[0:top]
-        # return self.subreddit_recommend(top_subreddits.index, n=10)
         user_subs = self._user_sub_map[user]
         recs = self.subreddit_recommend(user_subs, n=top)
         to_rec = {}

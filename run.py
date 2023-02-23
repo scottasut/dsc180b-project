@@ -35,11 +35,11 @@ def main(targets: list):
         process_data(setup_config['year'], setup_config['month'])
         
     if 'features' in targets:
-        try:
-            generate_features(setup_config['keywords'], setup_config['keyword_extractor'])
-        except FileNotFoundError:
-            print('Unable to find data files for feature generation. Please try running \'data\' target first.')
-            sys.exit(-1)
+        # try:
+        generate_features(setup_config['keywords'], setup_config['keyword_extractor'])
+        # except FileNotFoundError:
+        #     print('Unable to find data files for feature generation. Please try running \'data\' target first.')
+        #     sys.exit(-1)
     
     if 'test' in targets:
         pass
