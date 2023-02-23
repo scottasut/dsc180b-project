@@ -1,6 +1,6 @@
 ---
 layout: default
-title: <span style="color:#ff4500"> Interaction Graph-based Reddit Community Recommendation </span>
+title: Interaction Graph-based Reddit Community Recommendation
 ---
 <style>
 .heading1 {
