@@ -2,10 +2,17 @@
   color:black;
 }
 
-div {
+div.main {
   background-color:white;
   border-radius: 10px;
   padding-left:10px;
   color:black;
   margin-bottom:20px;
+}
+
+div.a {
+  background-color:white;
+  border-radius: 10px;
+  text-indent:20px;
+  color:black;
 }
