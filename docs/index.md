@@ -16,6 +16,13 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
 
 ## Overview
 
+<div style="background-color:gray">
+    <h2> Methodologies </h2>
+    <h3> Data Preparation </h3>
+    <h4> Data Analysis </h4>
+</div>
+
+
 ## Methodologies
 ### Data Preparation
 
