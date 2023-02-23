@@ -18,7 +18,20 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
 <div class = "main">
     <h2 class="heading"> Data Preparation </h2>
         <div class = "blank"><div class = "b">
-            Test
+            In order to fully leverage the graph structure of our data, we use TigerGraph,
+            a graph analytics platform which provides a myriad of tools and resources for graph-based data science
+            and machine learning, making it a valuable solution for us. The data we downloaded from pushshift,
+            each comment is given in the same format as the following example:
+            
+            There is a lot of cool data here, but we are most interested in the user who made the comment,
+            the subreddit it was posted to and the parent comment if any. Due to the fact that any comment
+            on Reddit is either a child of a post of another comment, we can use this parent relationship
+            to generate the comment chain graph structure we will set up in TigerGraph. We use this relationship
+            to generate our comment to comment edges in our graph where the vertices are the parent and child comments respectively.
+            We then use the author field to create edges between user vertices identified by those author names and the comment id's
+            as well as subreddit to comment edges using the subreddit name as an identifier for the subreddit vertices.
+            Once we have the correct files specifying those vertices and edges, we simply use TigerGraph's tools for
+            uploading and mapping the data to generate our graph.
         </div></div>
     <h2 class="heading"> Exploratory Data Analysis </h2>
         <div class = "a">
