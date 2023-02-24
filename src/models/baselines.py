@@ -29,23 +29,20 @@ class PopularRecommender:
         self._users = set()
         subreddit_counts = {}
         for d in data:
-            if len(d) < 2:
-                log.exception('initialization attempt with unexpected input data. Expected: (user, subreddit), Got: {}'.format(d))
-                raise ValueError('Elements of \'data\' should be tuples of the following format: (user, subreddit)')
-            u, sr = d[:2]
-            self._users.add(u)
+            u, sr, n = d
             if u not in self._interacted_in:
                 self._interacted_in[u] = set()
             self._interacted_in[u].add(sr)
+            self._users.add(u)
             if sr not in subreddit_counts:
-                subreddit_counts[sr] = 1
+                subreddit_counts[sr] = n
             else:
-                subreddit_counts[sr] += 1
+                subreddit_counts[sr] += n
         self._popular_subreddits = [sr for _, sr in sorted([(v, k) for k, v in subreddit_counts.items()], reverse=True)]
         log.info('model instantiation exit.')
     
     def recommend(self, user: str, n=1, avoid=None) -> list:
-        """_summary_
+        """Makes n subreddit recommendations based on most popular subreddits.
 
         Args:
             user (str): user to make recommendation for
@@ -79,7 +76,7 @@ class SimpleJaccard:
         """Instantiates and fills data structures for making Jaccard similarity recommendations.
 
         Args:
-            data (collection): collection containing tuples of two elements: (user, subreddit). Pandas.DataFrame acceptable.
+            data (collection): collection containing tuples of three elements: (user, subreddit, times). Pandas.DataFrame acceptable.
 
         Raises:
             ValueError: input data does not conform to expected format.
@@ -90,17 +87,12 @@ class SimpleJaccard:
         self._interacted_in = {}
         self._users = set()
         for d in data:
-            if len(d) != 2:
-                log.exception('initialization attempt with unexpected input data. Expected: (user, subreddit), Got: {}'.format(d))
-                raise ValueError('Elements of \'data\' should be tuples of the following format: (user, subreddit)')
-            u, sr = d
-            self._users.add(u)
+            u, sr, n = d
             if u not in self._interacted_in:
                 self._interacted_in[u] = {}
-            if sr not in self._interacted_in[u]:
-                self._interacted_in[u][sr] = 1
-            else:
-                self._interacted_in[u][sr] += 1
+            self._interacted_in[u][sr] = int(n)
+            self._users.add(u)
+
         log.info('model instantiation exit.')
 
     def recommend(self, user: str, n=1) -> list:
@@ -137,14 +129,9 @@ class SimpleJaccard:
                 if osr not in subreddits:
                     recommendations.add(osr)
         recommendations = tuple(recommendations)
-        if n == 1:
-            out = [random.choice(recommendations)]
-            log.info('recommend exit for user {}, n=1. Output: {}'.format(user, out))
-            return out
-        else:
-            out = random.sample(recommendations, k=min(n, len(recommendations)))
-            log.info('recommend exit for user {}, n={}. Output: {}'.format(user, n, out))
-            return out
+        out = random.sample(recommendations, k=min(n, len(recommendations)))
+        log.info('recommend exit for user {}, n={}. Output: {}'.format(user, n, out))
+        return out
 
     def _coef(self, u1: str, u2: str) -> float:
         """Calculates the Jaccard coefficient between two users based off of given input data.
@@ -174,23 +161,22 @@ class CosineKNN:
         """Instantiates and fills data structures for making KNN Cosine similarity recommendations. Trains sklearn.neighbors.NearestNeighbors model.
 
         Args:
-            data (collection): collection containing tuples of two elements: (user, subreddit). Pandas.DataFrame acceptable.
+            data (collection): collection containing tuples of three elements: (user, subreddit, times). Pandas.DataFrame acceptable.
 
         Raises:
             ValueError: input data does not conform to expected format.
         """
         log.info('model instantiation entry.')
         if not type(data) == pd.DataFrame:
-            data = pd.DataFrame(data, columns = ['user', 'subreddit'])
-        data.columns = ['user', 'subreddit']
-        self._data = data
+            data = pd.DataFrame(data, columns = ['user', 'subreddit', 'times'])
+        data.columns = ['user', 'subreddit', 'times']
         self._users = data['user'].unique()
         self._subs = data['subreddit'].unique()
         self._user_sub_map = data.groupby('user')['subreddit'].apply(set).to_dict()
-        data = data.groupby(['user', 'subreddit']).size().reset_index(name='n_comments')
-        data_max = data.groupby(['user'])['n_comments'].max().reset_index(name='max_comments')
+        # data = data.groupby(['user', 'subreddit']).size().reset_index(name='n_comments')
+        data_max = data.groupby(['user'])['times'].max().reset_index(name='max_comments')
         data = pd.merge(data, data_max, on='user', how='left')
-        data['rating'] = data['n_comments'] / data['max_comments']
+        data['rating'] = data['times'] / data['max_comments']
         self._users_encoding = {u:i for i, u in enumerate(set(data['user']))}
         self._subreddits_encoding = {sr:i for i, sr in enumerate(set(data['subreddit']))}
         self._subreddits_reverse_encoding = {v:k for k, v in self._subreddits_encoding.items()}
