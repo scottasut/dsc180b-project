@@ -1,4 +1,5 @@
 import zstandard as zstd
+import gzip
 import json
 import os
 import pandas as pd
@@ -49,7 +50,7 @@ def download(remote_path: str, local_path: str) -> None:
     prepare()
 
     log.info('data download task entry for remote_path: {}, local_path: {}.'.format(remote_path, local_path))
-    print('Downloading data...\n')
+    print('Downloading data...')
 
     if os.path.exists(local_path):
         log.info('{} already exists, skipping download of {}'.format(local_path, remote_path))
@@ -79,7 +80,6 @@ def process_data(year: str, month: str) -> None:
     # Process the data
     print('Processing data...')
 
-    data = {}
     comment_user_map = {}
     user_data, subreddit_data = {}, set()
     user_interactions, subreddit_interactions = {}, {}
@@ -104,8 +104,8 @@ def process_data(year: str, month: str) -> None:
                     user       = comment['author']        # Name of user who posted the comment
                     subreddit  = comment['subreddit']     # Name of Subreddit comment was posted to
                     parent_id  = comment['parent_id'][3:] # Comment ID of the parent of the comment
-                                                            # (prefixed with irrelavant information)
-                    comment_body = comment['body']          # Text contents of the comment
+                                                          # (prefixed with irrelavant information)
+                    comment_body = comment['body']        # Text contents of the comment
 
                     # When a user deletes their account, their comments remain
                     # and the author becomes '[deleted]'. We will skip these.

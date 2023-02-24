@@ -29,18 +29,18 @@ def load_config(path: str, required_params: list) -> dict:
 
 def main(targets: list):
 
-    setup_config = load_config('config/setup.json', ['year', 'month', 'keyword_extractor'])
+    setup_config = load_config('config/setup.json', ['year', 'month', 'test_year', 'test_month', 'keyword_extractor'])
 
     if 'data' in targets:
         process_data(setup_config['year'], setup_config['month'])
-        # build_test_set(2011, 12)
+        build_test_set(setup_config['test_year'], setup_config['test_month'])
         
     if 'features' in targets:
-        # try:
-        generate_features(setup_config['keywords'], setup_config['keyword_extractor'])
-        # except FileNotFoundError:
-        #     print('Unable to find data files for feature generation. Please try running \'data\' target first.')
-        #     sys.exit(-1)
+        try:
+            generate_features(setup_config['keywords'], setup_config['keyword_extractor'])
+        except FileNotFoundError:
+            print('Unable to find data files for feature generation. Please try running \'data\' target first.')
+            sys.exit(-1)
     
     if 'test' in targets:
         pass
