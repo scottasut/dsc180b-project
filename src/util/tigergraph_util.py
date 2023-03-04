@@ -23,6 +23,28 @@ def connection(config_path: str):
     )
     conn.getToken(args['gsqlSecret'])
     return conn
+
+def split_vertices(conn: tg.TigerGraphConnection, train=.9, test=.1):
+    """Splits the vertices in the graph into training and testing sets.
+
+    Args:
+        conn (tg.TigerGraphConnection): A TigerGraph connection to the graph
+        train (float, optional): The proportion to make training data. Defaults to .9.
+        test (float, optional): The proportion to make test data. Defaults to .1.
+    """
+    splitter = conn.gds.vertexSplitter(is_train=train, is_test=test)
+    splitter.run()
+
+def split_edges(conn: tg.TigerGraphConnection, train=.9, test=.1):
+    """Splits the edges in the graph into training and testing sets.
+
+    Args:
+        conn (tg.TigerGraphConnection): A TigerGraph connection to the graph
+        train (float, optional): The proportion to make training data. Defaults to .9.
+        test (float, optional): The proportion to make test data. Defaults to .1.
+    """
+    splitter = conn.gds.edgeSplitter(is_train=train, is_test=test)
+    splitter.run()
     
 def load_graph(conn: tg.TigerGraphConnection, batch_size: int):
     """Loads a TigerGraph graph in batches for model training. Assumes schema used for this
@@ -51,4 +73,15 @@ def load_graph(conn: tg.TigerGraphConnection, batch_size: int):
         },
         output_format = 'PyG'
     )
+
+def get_subreddits(conn, user):
+    # returns all subreddits a user has interacted in
+    parameters = {
+        "u": user
+    }
+    results = conn.runInstalledQuery("get_subreddits", params=parameters)
+    subs = set()
+    for comment in results[0]['subs']:
+        subs.add(comment['attributes']['subs.name'])
+    return subs
     

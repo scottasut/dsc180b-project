@@ -80,6 +80,3 @@ class Evaluator:
             except:
                 continue
         return sum(p_vals) / len(p_vals), sum(r_vals) / len(r_vals)
-
-    def r_precision(self):
-        pass

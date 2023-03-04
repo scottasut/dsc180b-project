@@ -19,12 +19,15 @@ GENERIC_LOCAL_PATH  = 'data/raw/RC_{}-{}.zst'
 
 # Processed data paths:
 USER_PATH              = 'data/temp/user.csv'             # User vertices
-SUBREDDIT_PATH         = 'data/out/subreddit.csv'         # Subreddit vertices
+SUBREDDIT_PATH         = 'data/temp/subreddit.csv'        # Subreddit vertices
 USER_USER_PATH         = 'data/out/user_user.csv'         # User to user edges
 USER_SUBREDDIT_PATH    = 'data/out/user_subreddit.csv'    # User to subreddit edges
 TEST_INTERACTIONS_PATH = 'data/out/test_interactions.csv' # User to subreddit interactions for testing
 
 DELETED_USER = '[deleted]'
+
+SUBREDDIT_KARMA_THRESHOLD      = 5
+SUBREDDIT_N_COMMENTS_THRESHOLD = 25
 
 def prepare() -> None:
     """Set up file structure to accommodate data
@@ -81,8 +84,9 @@ def process_data(year: str, month: str) -> None:
     print('Processing data...')
 
     comment_user_map = {}
-    user_data, subreddit_data = {}, set()
+    user_data, subreddit_data = {}, {}
     user_interactions, subreddit_interactions = {}, {}
+    subreddit_corpus_size = {}
     
     with open(local_path, 'rb') as f:
         dctx = zstd.ZstdDecompressor(max_window_size=2147483648)
@@ -105,7 +109,9 @@ def process_data(year: str, month: str) -> None:
                     subreddit  = comment['subreddit']     # Name of Subreddit comment was posted to
                     parent_id  = comment['parent_id'][3:] # Comment ID of the parent of the comment
                                                           # (prefixed with irrelavant information)
+                    karma = comment['score']              # net score of upvotes/downvotes on comment
                     comment_body = comment['body']        # Text contents of the comment
+                    comment_body = comment_body.lower()
 
                     # When a user deletes their account, their comments remain
                     # and the author becomes '[deleted]'. We will skip these.
@@ -115,11 +121,17 @@ def process_data(year: str, month: str) -> None:
                     comment_user_map[comment_id] = user
 
                     if user not in user_data:
-                        user_data[user] = comment_body.lower()
+                        user_data[user] = comment_body
                     else:
-                        user_data[user] += ' ' + comment_body.lower()
+                        user_data[user] += ' ' + comment_body
                     
-                    subreddit_data.add(subreddit)
+                    if subreddit not in subreddit_data:
+                        subreddit_corpus_size[subreddit] = 0
+                        subreddit_data[subreddit] = ''
+                    
+                    if karma >= SUBREDDIT_KARMA_THRESHOLD and subreddit_corpus_size[subreddit] <= SUBREDDIT_N_COMMENTS_THRESHOLD:
+                        subreddit_data[subreddit] += ' ' + comment_body
+                        subreddit_corpus_size[subreddit] += 1
 
                     # Some parent IDs reference a post rather than a comment,
                     # we will ignore these as interactions
@@ -141,11 +153,12 @@ def process_data(year: str, month: str) -> None:
                 previous_line = lines[-1]
     
     users = pd.DataFrame(user_data.items())
-    subreddits = pd.Series(list(subreddit_data))
+    subreddits = pd.DataFrame(subreddit_data.items())
     users_users = pd.DataFrame(user_interactions.items())
     users_users = pd.concat([pd.DataFrame(users_users[0].to_list(), columns=['u1', 'u2']), users_users], axis=1).drop(0, axis=1)
     users_users['u1'] = users_users['u1'].map(comment_user_map)
     users_users['u2'] = users_users['u2'].map(comment_user_map)
+    users_users.dropna(inplace=True)
     users_subreddits = pd.DataFrame(subreddit_interactions.items())
     users_subreddits = pd.concat([pd.DataFrame(users_subreddits[0].to_list(), columns=['u1', 'sr']), users_subreddits], axis=1).drop(0, axis=1)
 

@@ -37,7 +37,7 @@ def main(targets: list):
         
     if 'features' in targets:
         try:
-            generate_features(setup_config['keywords'], setup_config['keyword_extractor'])
+            generate_features(setup_config['keywords'])
         except FileNotFoundError:
             print('Unable to find data files for feature generation. Please try running \'data\' target first.')
             sys.exit(-1)

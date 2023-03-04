@@ -11,10 +11,12 @@ sys.path.append('dataset')
 log = logging.getLogger(__name__)
 configure_logger('../../log.txt')
 
-USER_TEMP_PATH    = 'data/temp/user.csv'
-USER_OUT_PATH     = 'data/out/user.csv'
-WORD2VEC_MDL_PATH = 'glove-wiki-gigaword-50'
-WORD2VEC_MDL_SIZE = 50
+USER_TEMP_PATH      = 'data/temp/user.csv'
+USER_OUT_PATH       = 'data/out/user.csv'
+SUBREDDIT_TEMP_PATH = 'data/temp/subreddit.csv'
+SUBREDDIT_OUT_PATH  = 'data/out/subreddit.csv'
+WORD2VEC_MDL_PATH   = 'glove-wiki-gigaword-50'
+WORD2VEC_MDL_SIZE   = 50
 
 def extract_tfidf(corpus: pd.Series, n: int):
     tfidf = TfidfVectorizer(stop_words='english')
@@ -61,6 +63,8 @@ def generate_features(n_keywords=10) -> None:
 
     if not os.path.exists(USER_TEMP_PATH):
         raise FileNotFoundError('Unable to find needed file {}.'.format(USER_TEMP_PATH))
+    if not os.path.exists(SUBREDDIT_TEMP_PATH):
+        raise FileNotFoundError('Unable to find needed file {}.'.format(SUBREDDIT_TEMP_PATH))
 
     expected_length = n_keywords * WORD2VEC_MDL_SIZE
     w2v = load_word2vec()
@@ -72,7 +76,17 @@ def generate_features(n_keywords=10) -> None:
     users['embedding'] = users['corpus'].apply(lambda x: list(word2vec_embedding(w2v, x, expected_length)))
     user_embeddings = pd.DataFrame(users['embedding'].to_list())
     users = pd.concat([users['user'].to_frame(), user_embeddings], axis=1)
+
+    subreddits = pd.read_csv(SUBREDDIT_TEMP_PATH, header=None)
+    subreddits.columns = ['subreddit', 'description']
+    subreddits['description'] = subreddits['description'].str.replace('[^a-zA-Z0-9\s]', '', regex=True)
+    subreddits['description'] = extract_tfidf(subreddits['description'].values.astype('U'), n_keywords)
+    subreddits['embedding'] = subreddits['description'].apply(lambda x: list(word2vec_embedding(w2v, x, expected_length)))
+    subreddit_embeddings = pd.DataFrame(subreddits['embedding'].to_list())
+    subreddits = pd.concat([subreddits['subreddit'].to_frame(), subreddit_embeddings], axis=1)
+
     users.to_csv(USER_OUT_PATH, index=False, header=False)
+    subreddits.to_csv(SUBREDDIT_OUT_PATH, index=False, header=False)
 
     print('Feature generation complete.')
 
