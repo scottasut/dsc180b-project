@@ -21,9 +21,10 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
     to try recommending subreddits to users by using user interactions as embeddings in my recommender system. Furthermore, I want this to be a graph-based
     recommender system. How would I go about creating something like this?
     </span><br>
+    <span style="color:black">Suggested: </span> <span style="color:blue">r/TigerGraph</span>
 </div>
-<div class = "main">
-    <h2 class="heading"> Introduction </h2>
+<div class = "main" style = "margin-bottom: 10 px">
+    <h2 class="heading" style="margin-top:5px"> Introduction </h2>
         <div class = "blank"><div class = "b">
             &nbsp&nbsp&nbsp&nbsp Social media has become the most important way for people to access information, connect with friends, and expand businesses.
             Around 70 percent of all Americans use social media to connect with each other and share information.
@@ -41,12 +42,19 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             subreddit communities they are a part of, immediately exposing them to similar communities may be beneficial in making them recurring
             users rather than one-time users. From a graph perspective, this problem is worth investigating as it can evaluate the relevancy of user
             interactions in a graph-like comment interaction structure as a basis for recommendation systems. We use a graph-based machine learning
-            algorithm that assists in recommending subreddits to users based on their interactions with other users in subreddits through comment chains.<br>
+            algorithm that assists in recommending subreddits to users based upon their interactions with other users in subreddits through comment chains.<br>
+            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
         </div></div>
     
-    <h2 class="heading"> Data Preparation </h2>
+    <h2 class="heading" style="margin-top:5px"> Why Graph? </h2>
         <div class = "blank"><div class = "b">
-            In order to fully leverage the graph structure of our data, we use TigerGraph,
+            This is the section for explaining why graph could/should be used...
+            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+        </div></div>
+    
+    <h2 class="heading" style="margin-top:5px"> Data Preparation </h2>
+        <div class = "blank"><div class = "b">
+            &nbsp&nbsp&nbsp&nbsp  In order to fully leverage the graph structure of our data, we use TigerGraph,
             a graph analytics platform which provides a myriad of tools and resources for graph-based data science
             and machine learning, making it a valuable solution for us. The data we downloaded from pushshift,
             each comment is given in the same format as the following example:
@@ -60,19 +68,57 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             as well as subreddit to comment edges using the subreddit name as an identifier for the subreddit vertices.
             Once we have the correct files specifying those vertices and edges, we simply use TigerGraph's tools for
             uploading and mapping the data to generate our graph.
+            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
         </div></div>
-    <h2 class="heading"> Exploratory Data Analysis </h2>
+    <h2 class="heading" style="margin-top:5px"> Exploratory Data Analysis </h2>
         <div class = "a">
-            Does this work
+            TODO
+            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
         </div>
-    <h2 class="heading"> Baselines </h2>
+    <h2 class="heading" style="margin-top:5px"> Baselines </h2>
         <div class = "blank"><div class = "b">
             Let us look into some baselines...
-            <h3 class="heading"> Non-Graph Algorithms </h3>
+            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+            <h3 class="heading" style="margin-top:5px"> Non-Graph Algorithms </h3>
             <div class = "blank"><div class = "b">
                 This is the Non-Graph Algorithms section.
+                <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+            </div></div>
+            <h3 class="heading" style="margin-top:5px"> Centrality Algorithms </h3>
+            <div class = "blank"><div class = "b">
+                This is the Centrality Algorithms section.
+                <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+            </div></div>
+            <h3 class="heading" style="margin-top:5px"> Community Detection Algorithms </h3>
+            <div class = "blank"><div class = "b">
+                This is the Community Detection Algorithms section.
+                <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             </div></div>
         </div></div>
+    
+    <h2 class="heading" style="margin-top:5px"> Final Model </h2>
+        <div class = "blank"><div class = "b">
+            Here lies our final model...
+            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+        </div></div>
+    
+    <h2 class="heading" style="margin-top:5px"> Results & Evaluation </h2>
+        <div class = "blank"><div class = "b">
+            Here lies our results...
+            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+        </div></div>
+    
+    <h2 class="heading" style="margin-top:5px"> Conclusion </h2>
+        <div class = "blank"><div class = "b">
+            Here lies our conclusion...
+            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+            <h3 class="heading" style="margin-top:5px"> Future Work/Next Steps </h3>
+            <div class = "blank"><div class = "b">
+                This is the Future Work/Next Steps section.
+                <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+            </div></div>
+        </div></div>
+    <div>&nbsp;</div>
 </div>
 
 <!-- <div style="background-color:white;border-radius: 10px;padding-left:10px;color:black">
