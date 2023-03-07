@@ -2,8 +2,12 @@ import numpy as np
 import pandas as pd
 import torch
 from torch_geometric.data import HeteroData
+from torch_geometric.nn import SAGEConv, to_hetero
+from torch import Tensor
 import torch.nn.functional as F
 import torch_geometric.transforms as T
+from torch_geometric.loader import LinkNeighborLoader
+import tqdm
 from sklearn.neighbors import NearestNeighbors
 from src.util.tigergraph_util import get_subreddits
 from src.models.baselines import PopularRecommender
@@ -66,116 +70,93 @@ class NetStatKNN:
                 recommendations.append(pr)
         return recommendations
 
-class LightGCNHandler:
-    def __init__(self, user, subreddit, user_user, user_subreddit, test_val_split=(0.2, 0.1)):
-
-        if sum(test_val_split) >= 1:
-            raise ValueError('\'train_val_split\' must sum to less than 1.')
+class GNNHandler:
+    def __init__(self, data):
+        self.data = data
+        transform = T.RandomLinkSplit(
+            num_val=0.1,
+            num_test=0.1,
+            disjoint_train_ratio=0.3,
+            neg_sampling_ratio=2.0,
+            add_negative_train_samples=False,
+            edge_types=('user', 'commented_in', 'subreddit'),
+            rev_edge_types=('subreddit', 'rev_commented_in', 'user'), 
+        )
+        self.train_data, self.val_data, self.test_data = transform(data)
+        edge_label_index = self.train_data['user', 'commented_in', 'subreddit'].edge_label_index
+        edge_label = self.train_data['user', 'commented_in', 'subreddit'].edge_label
+        self.train_loader = LinkNeighborLoader(
+            data=self.train_data,
+            num_neighbors=[20, 10],
+            neg_sampling_ratio=2.0,
+            edge_label_index=(('user', 'commented_in', 'subreddit'), edge_label_index),
+            edge_label=edge_label,
+            batch_size=128,
+            shuffle=True,
+        )
+        self.model = None
     
-        self.data = HeteroData()
-        self._user_idx_map = {u:i for i, u in enumerate(user[0])}
-        self._user_idx_reverse_map = {i:u for u, i in self._user_idx_map.items()}
-        self.data['user'].x = torch.tensor(user.drop(columns=[0]).values)
-        self._subreddit_idx_map = {s:i for i, s in enumerate(subreddit[0])}
-        self._subreddit_idx_reverse_map = {i:s for s, i in self._subreddit_idx_map.items()}
-        self.data['subreddit'].x = torch.tensor(subreddit.drop(columns=[0]).values)
-        user_user[0], user_user[1] = user_user[0].map(self._user_idx_map), user_user[1].map(self._user_idx_map)
-        self.data['user', 'interacted_with', 'user'] = torch.tensor(user_user.values)
-        user_subreddit[0], user_subreddit[1] = user_subreddit[0].map(self._user_idx_map), user_subreddit[1].map(self._subreddit_idx_map)
-        self.data['user', 'commented_in', 'subreddit'] = torch.tensor(user_subreddit.values)
+    def set_model(self, hidden_channels):
+        self.model = Model(self.train_data, hidden_channels=hidden_channels)
+
+    def train(self, epochs):
+        if not self.model:
+            raise Exception('Must call \'set_model\' to define model first.')
         
-        self.train_test_split = test_val_split
-        splitter = T.RandomNodeSplit(num_test=test_val_split[0], num_val=test_val_split[1])
-        
-    
-    def set_model(self):
-        pass
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.model = self.model.to(device)
+        optimizer = torch.optim.Adam(self.model.parameters(), lr=0.001)
 
-    def train_helper(self, epoch):
-        self.model.train()
-        epoch_train_loss = []
-        epoch_train_acc = torch.Accuracy()
-        for batch_num, data in enumerate(self.graph_loader):
-            data.to(self.device)
-
-            # Forward pass
-            out = self.model(data.x, data.edge_index)
-
-            # Calculate loss
-            loss = F.cross_entropy(out[data.is_train], data.y[data.is_train])
-
-            # Backward pass
-            self.optimizer.zero_grad()
-            loss.backward()
-            self.optimizer.step()
-            epoch_train_loss.append(loss)
-
-            # Predict on Training data
-            with torch.no_grad():
-                pred = out.argmax(dim=1)
-                epoch_train_acc.update(pred[data.is_train], data.y[data.is_train])
-
-            print('Epoch: {}, Training Batch: {}, Train accuracy: {:.4f}, Train loss: {:.4f}'.format(epoch, batch_num, epoch_train_acc.value, np.mean(epoch_train_loss)))
-
-
-    def validate(self):
-        self.model.eval()
-        val_acc = torch.Accuracy()
-        val_loss = []
-        with torch.no_grad():
-            for data in self.data_loader:
-                # Forward pass
-                out = self.model(data.x, data.edge_index)
-                # Getting predictions
-                pred = out.max(dim=1)
-                # Validation loss
-                loss = F.cross_entropy(out[data.is_test], data.y[data.is_test])
-                val_loss.append(loss)
-                # Validation accuracy
-                val_acc.update(pred[data.is_test], data.y[data.is_test])
-
-        return val_acc, np.mean(val_loss)
-
-    def train(self):
-        for epoch in range(self.num_batches):
-            self.train_helper(epoch)
-            acc, loss = self.validate()
-            print('Epoch: {}, Val accuracy: {:.4f}, Val loss: {:.4f}'.format(epoch, acc, loss))
-        
+        for epoch in range(epochs):
+            total_loss, total_examples = 0, 0
+            for sample in tqdm.tqdm(self.train_loader):
+                sample = sample.to(device)
+                optimizer.zero_grad()
+                prediction = self.model(sample)
+                true_label = sample['user', 'commented_in', 'subreddit'].edge_label
+                loss = F.binary_cross_entropy_with_logits(prediction, true_label)
+                loss.backward()
+                optimizer.step()
+                total_loss += float(loss) * prediction.numel()
+                total_examples += prediction.numel()
+            print('Epoch {}, Loss: {}'.format(epoch, round(total_loss / total_examples, 4)))
 
 class GNN(torch.nn.Module):
-    def __init__(self, input_dim, hidden_dim, output_dim, num_layers, dropout, conv_model):
-        super(GNNStack, self).__init__()
-        conv_model = pyg.nn.SAGEConv
-
-
-        self.convs = nn.ModuleList()
-        self.convs.append(conv_model(input_dim, hidden_dim))
-        self.dropout = dropout
-        self.num_layers = num_layers
-
-
-        # Create num_layers GraphSAGE convs
-        assert (self.num_layers >= 1), 'Number of layers is not >=1'
-        for l in range(self.num_layers - 1):
-            self.convs.append(conv_model(hidden_dim, hidden_dim))
-
-
-        # post-message-passing processing 
-        self.post_mp = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim), nn.Dropout(self.dropout),
-            nn.Linear(hidden_dim, output_dim))
-
-
-    def forward(self, x, edge_index):
-        for i in range(self.num_layers):
-            x = self.convs[i](x, edge_index)
-            x = F.relu(x)
-            x = F.dropout(x, p=self.dropout, training=self.training)
-
-
-        x = self.post_mp(x)
-
-
-        # Return final layer of embeddings if specified
+    def __init__(self, hidden_channels):
+        super().__init__()
+        self.conv1 = SAGEConv(hidden_channels, hidden_channels)
+        self.conv2 = SAGEConv(hidden_channels, hidden_channels)
+    
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        x = F.relu(self.conv1(x, edge_index))
+        x = self.conv2(x, edge_index)
         return x
+
+class Classifier(torch.nn.Module):
+    def forward(self, x_user: Tensor, x_movie: Tensor, edge_label_index: Tensor) -> Tensor:
+        edge_feat_user = x_user[edge_label_index[0]]
+        edge_feat_movie = x_movie[edge_label_index[1]]
+        return (edge_feat_user * edge_feat_movie).sum(dim=-1)
+
+class Model(torch.nn.Module):
+    def __init__(self, data, hidden_channels):
+        super().__init__()
+        self.movie_lin = torch.nn.Linear(1250, hidden_channels, dtype=torch.float64)
+        self.user_emb = torch.nn.Embedding(data["user"].num_nodes, hidden_channels)
+        self.movie_emb = torch.nn.Embedding(data["subreddit"].num_nodes, hidden_channels)
+        self.gnn = GNN(hidden_channels)
+        self.gnn = to_hetero(self.gnn, metadata=data.metadata())
+        self.classifier = Classifier()
+    
+    def forward(self, data: HeteroData) -> Tensor:
+        x_dict = {
+          "user": self.user_emb(data["user"].node_id).float(),
+          "subreddit": self.movie_lin(data["subreddit"].x).float() + self.movie_emb(data["subreddit"].node_id).float(),
+        } 
+        x_dict = self.gnn(x_dict, data.edge_index_dict)
+        pred = self.classifier(
+            x_dict["user"],
+            x_dict["subreddit"],
+            data["user", "commented_in", "subreddit"].edge_label_index,
+        )
+        return pred
