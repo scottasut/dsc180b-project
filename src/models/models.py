@@ -83,14 +83,26 @@ class GNNHandler:
             rev_edge_types=('subreddit', 'rev_commented_in', 'user'), 
         )
         self.train_data, self.val_data, self.test_data = transform(data)
-        edge_label_index = self.train_data['user', 'commented_in', 'subreddit'].edge_label_index
-        edge_label = self.train_data['user', 'commented_in', 'subreddit'].edge_label
+        train_edge_label_index = self.train_data['user', 'commented_in', 'subreddit'].edge_label_index
+        train_edge_label = self.train_data['user', 'commented_in', 'subreddit'].edge_label
         self.train_loader = LinkNeighborLoader(
             data=self.train_data,
             num_neighbors=[20, 10],
             neg_sampling_ratio=2.0,
-            edge_label_index=(('user', 'commented_in', 'subreddit'), edge_label_index),
-            edge_label=edge_label,
+            edge_label_index=(('user', 'commented_in', 'subreddit'), train_edge_label_index),
+            edge_label=train_edge_label,
+            batch_size=128,
+            shuffle=True,
+        )
+
+        test_edge_label_index = self.test_data['user', 'commented_in', 'subreddit'].edge_label_index
+        test_edge_label = self.test_data['user', 'commented_in', 'subreddit'].edge_label
+        self.test_loader = LinkNeighborLoader(
+            data=self.test_data,
+            num_neighbors=[20, 10],
+            neg_sampling_ratio=2.0,
+            edge_label_index=(('user', 'commented_in', 'subreddit'), test_edge_label_index),
+            edge_label=test_edge_label,
             batch_size=128,
             shuffle=True,
         )
@@ -142,6 +154,7 @@ class Model(torch.nn.Module):
     def __init__(self, data, hidden_channels):
         super().__init__()
         self.movie_lin = torch.nn.Linear(1250, hidden_channels, dtype=torch.float64)
+        self.user_lin = torch.nn.Linear(1250, hidden_channels, dtype=torch.float64)
         self.user_emb = torch.nn.Embedding(data["user"].num_nodes, hidden_channels)
         self.movie_emb = torch.nn.Embedding(data["subreddit"].num_nodes, hidden_channels)
         self.gnn = GNN(hidden_channels)
@@ -150,9 +163,9 @@ class Model(torch.nn.Module):
     
     def forward(self, data: HeteroData) -> Tensor:
         x_dict = {
-          "user": self.user_emb(data["user"].node_id).float(),
+          "user": self.user_lin(data["user"].x).float() + self.user_emb(data["user"].node_id).float(),
           "subreddit": self.movie_lin(data["subreddit"].x).float() + self.movie_emb(data["subreddit"].node_id).float(),
-        } 
+        }
         x_dict = self.gnn(x_dict, data.edge_index_dict)
         pred = self.classifier(
             x_dict["user"],

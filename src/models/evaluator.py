@@ -63,20 +63,33 @@ class Evaluator:
             r_vals.append(len(relevant_recs) / len(relevant))
         return sum(r_vals) / len(r_vals)
     
-    def precision_recall(self, mdl, at: int, subset_size=-1, **mdl_params):
+    def precision_recall(self, mdl, at: list, subset_size=-1, **mdl_params):
         users = self.users
         if subset_size != -1:
             users = sample(users, min(subset_size, len(users)))
-            
-        p_vals = []
-        r_vals = []
+        
+        max_at = max(at)
+        scores = {}
+        for k in at:
+            scores[k] = {}
+            scores[k]['p_vals'] = []
+            scores[k]['r_vals'] = []            
+
         for user in users:
             try:
-                recommendations = mdl.recommend(user, n=at, **mdl_params)
-                relevant = self._interactions[user]
-                relevant_recs = relevant.intersection(set(recommendations))
-                p_vals.append(len(relevant_recs) / len(recommendations))
-                r_vals.append(len(relevant_recs) / len(relevant))
+                recommendations = mdl.recommend(user, n=max_at, **mdl_params)
+                for k in at:
+                    recs_at_k = recommendations[:k]
+                    relevant = self._interactions[user]
+                    relevant_recs = relevant.intersection(set(recs_at_k))
+                    scores[k]['p_vals'].append(len(relevant_recs) / len(recs_at_k))
+                    scores[k]['r_vals'].append(len(relevant_recs) / len(relevant))
             except:
                 continue
-        return sum(p_vals) / len(p_vals), sum(r_vals) / len(r_vals)
+        
+        results = {}
+        for k in at:
+            key = '@{}'.format(k)
+            p_vals, r_vals = scores[k]['p_vals'], scores[k]['r_vals']
+            results[key] = (sum(p_vals) / len(p_vals), sum(r_vals) / len(r_vals))
+        return results
