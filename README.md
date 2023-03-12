@@ -77,11 +77,11 @@ In order to run the different components of the project, you will interact with 
 
 Targets can be called as follows `python run.py data features ...`.
 
-#### Nodes
+<!-- #### Nodes
 
 This graph is heterogeneous, meaning that there are multiple classes of nodes/vertices involved: class “user”, class “subreddit”, and class “comment”. Each class of vertex has their own attributes associated with them, some of which are already existing from the original features of the data and some that are created during feature engineering. The attributes of our vertices can be found below: 
 
-<!-- user
+ user
 ![user](https://user-images.githubusercontent.com/71921141/218294775-498e8fc5-dc21-4321-8367-37777dec8a2d.png)
 
 subreddits
