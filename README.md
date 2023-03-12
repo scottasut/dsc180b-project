@@ -42,9 +42,7 @@ In order to leverage graph-based machine learning techniques and TigerGraph's su
 Next, within the GraphStudio tool, we need to create a graph schema to hold our data:
 
 1. Nagivate to 'Tools' > 'GraphStudio' and select the cluster you created.
-2. Follow these steps to create the required schema:
-
-[![schema_tutorial](https://user-images.githubusercontent.com/55766484/224579063-e921fd6f-2b71-49e2-ba78-c80acc46448c.gif)](https://www.youtube.com/watch?v=Z48cjYuJXX4)
+2. Follow [these](https://youtu.be/Z48cjYuJXX4) steps to create the required schema:
 
 
 #### What is a graph schema?
