@@ -6,7 +6,7 @@
 Interaction Graph-Based Community Recommendation on Reddit
 </h1>
 
-**Authors**
+#### Group Members
 
 - Scott Sutherland (sasuther@ucsd.edu)
 - Ryan Don (rdon@ucsd.edu)
@@ -52,8 +52,7 @@ A graph schema is a kind of blueprint that defines the types of nodes and edges 
 #### Loading our Data:
 *This step requires that the data has been downloaded and processed, please refer to the [Usage](#usage) section*
 
-Within GraphStudio, you can follow these steps:
-TODO: Add video of mapping data
+Within GraphStudio, you can follow [these](https://www.youtube.com/watch?v=7sg6Cw7BuWw) steps
 
 Once you have TigerGraph up and running, you need to be able to authenticate yourself when using it. In this project, you can do so by creating `configs/tigergraph_config.json` in this directory which contains the following: 
 ```
@@ -107,8 +106,18 @@ replied_to
 belongs_to
 ![belongs_to](https://user-images.githubusercontent.com/71921141/218294721-1af356af-53c8-4632-84f5-9a922128860b.png) -->
 
-## Some important notes:
+#### Important Usage Notes:
 - Your TigerGraph cluster must be on when calling any of the functions here which use `pyTigerGraph` otherwise a connection will not be able to be established. If you are experiencing connection errors, ensure that the cluster you are using is indeed turned on.
+- The `data` and `feature` target processes can be configured in a couple of ways via a mandatory file `configs/setup.json` which contains the following:
+```
+{
+    "year": "2010",
+    "month": "12",
+    "test_year": "2011",
+    "test_month": "03",
+    "keywords": 25
+}
+```
 
 ## Resources:
 - [Reddit API](https://www.reddit.com/dev/api/)
