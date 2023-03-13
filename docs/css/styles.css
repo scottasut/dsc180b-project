@@ -43,7 +43,8 @@ sub {
 
 p.center{
   text-align:center;
-  font-size: 8px;
+  font-size: 12px;
   display:inline-block;
   position:relative;
+  padding-left:100px;
 }
