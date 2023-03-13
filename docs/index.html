@@ -222,7 +222,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             replied. These data are likely not very useful in generating meaningful metrics for recommendation based on user comment interactions.
 
             However, 45% of the comment data are part of chains with 41% being 'small' chains of only 2 - 10 comments and the other 4% being long chains with over 10
-            comments. We can examine the distributions of both of these groups:<br>
+            comments. We can examine the distributions of both of these groups:<br><br>
             <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                 <img src="./images/cmt_chain_length_distr_clean.png">
                 <figcaption>Fig 8 - Distribution of Comment Chain Lengths (2-10 and 10+)</figcaption>
@@ -239,15 +239,15 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             Next, we look at the ratio between the number of unique users in a chain and the total number of comments in that chain. This tells us 
             how unique the set of users participating in a chain is. Smaller ratios means there is less diversity. We find that the chains are generally 
             quite diverse as, on average, the number of unique users is very close to the total number of comments. However, because we are including 
-            chains of length one which the ration is guaranteed to be 1.0 for, this value is quite skewed. We remove those and try again:
+            chains of length one which the ration is guaranteed to be 1.0 for, this value is quite skewed. We remove those and try again:<br>
             
             <table>
                 <tr>
-                    <td>\textbf{Minimum Number in Chain}</td>
-                    <td>\textbf{count}</td>
-                    <td>\textbf{mean}</td>
-                    <td>\textbf{std}</td>
-                    <td>\textbf{min}</td>
+                    <td>Minimum Number in Chain</td>
+                    <td>count</td>
+                    <td>mean</td>
+                    <td>std</td>
+                    <td>min</td>
                 </tr>
                 <tr>
                     <td>1</td>
@@ -319,10 +319,10 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                     <td>0.166</td>
                     <td>0.085</td>
                 </tr>
-            </table>
+            </table><br>
             
             This is more indicative of the data we wanted to see. Now, as we move towards larger and larger chains, the average ratio of unique users 
-            seems to plataeu at ~0.78 as indicated by Figure 10.<br>
+            seems to plataeu at ~0.78 as indicated by Figure 10.<br><br>
             <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                 <img src="./images/avg_unique_users_chain.png">
                 <figcaption>Fig 10 - Average Ratio of Unique Users in Chains</figcaption>
@@ -335,6 +335,41 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             &nbsp&nbsp&nbsp&nbsp After completing our EDA, we aim to develop baseline models for community detection so as to compare these to our final model. 
             We develop baseline models: K-Nearest Neighbors, a recommender system using Jaccard similarity, and a simple popularity prediction model. 
             These baselines are not necessarily graph-based, but they help us to set and measure the baseline to then build upon for our final model.
+            <ol>
+                <li>The K-Nearest Neighbors algorithm we develop uses cosine similarity as the metric, and chooses 20 neighbors. Cosine similarity is a measure
+                    of similarity between two data points in a plane, and in a KNN is used to determine the distance between two points. This can be found 
+                    mathematically as follows:
+                    <table cellspacing=0  border=0 align=center>
+                    <tr>
+                      <td nowrap align="center">
+
+                            cos(<font face=symbol>q</font>) = 
+                      </td>
+                      <td nowrap align="center">
+                        <table cellspacing=0 border=0 >
+                        <tr>
+                          <td nowrap align="center">
+                            A &#183; B
+                          </td>
+                        </tr>
+                        </table>
+                        <div class=hrcomp><hr noshade size=1></div>
+                        <table cellspacing=0 border=0 >
+                        <tr>
+                          <td nowrap align=center>
+                            ||A|| ||B||
+                          </td>
+                        </tr>
+                        </table>
+                      </td>
+                      <td nowrap align=center>
+
+<!--                         <a name="eq0">&nbsp;&nbsp;&nbsp;&nbsp;<font color=blue>(0)</font> -->
+                      </td>
+                    </tr>
+                    </table>
+                </li>
+            </ol>
             <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             <h3 class="heading" style="margin-top:5px"> Non-Graph Algorithms </h3>
             <div class = "blank"><div class = "b">
