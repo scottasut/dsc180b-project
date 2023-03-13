@@ -43,4 +43,5 @@ sub {
 
 p.center{
   text-align:center;
+  font-size: 0.5em;
 }
