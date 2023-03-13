@@ -334,7 +334,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
         <div class = "blank"><div class = "b">
             &nbsp&nbsp&nbsp&nbsp After completing our EDA, we aim to develop baseline models for community detection so as to compare these to our final model. 
             We develop baseline models: K-Nearest Neighbors, a recommender system using Jaccard similarity, and a simple popularity prediction model. 
-            These baselines are not necessarily graph-based, but they help us to set and measure the baseline to then build upon for our final model.
+            These baselines are not necessarily graph-based, but they help us to set and measure the baseline to then build upon for our final model.<br>
             <div class = "blank"><ol>
                 <li>The K-Nearest Neighbors algorithm we develop uses cosine similarity as the metric, and chooses 20 neighbors. Cosine similarity is a measure
                     of similarity between two data points in a plane, and in a KNN is used to determine the distance between two points. This can be found 
@@ -353,6 +353,34 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                     subscribed to.
                 </li>
             </ol></div>
+            
+            We then build simple models in TigerGraph to calculate several different metrics based on our graph network:<br>
+            <ul>
+                <li>Closeness for Users: a measure of the average farness (inverse distance) to all other user nodes. 
+                    Nodes with a high closeness score have the shortest distance to all other nodes. The closeness of a node <math>x</math> is determined by:<br>
+                    <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                        <img src="./images/closeness_user.PNG">
+                    </figure><br>
+                    where $N$ is the number of nodes in the graph, and $d(y,x)$ is the length of the shortest path between user vertices x and y. <br>
+                </li>
+                <li>Betweenness for Users: This is a measure of the percentage of shortest paths to other users that must go through a specific user node. 
+                    A user node with high betweenness is likely to be aware of what is going on in multiple circles. The equation for betweenness of a given 
+                    node $u$ is:
+                    <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                        <img src="./images/between_user.PNG">
+                    </figure><br>
+                    where $\sigma_{v,w}$ is the total number of shortest paths from node $v$ to node $w$, and $\sigma_{v,w}(u)$ is the total number of shortest 
+                    paths from node $v$ to node $w$ that pass through $u$.
+                </li>
+                <li> Eigenvector for Users: eigenvector centrality is a measure of the influence of a node in a network. A high score means that a node is connected 
+                    to many nodes who have high scores. For a given graph $G := (V,E)$ with $|V|$ vertices, where $A = (a_{v,t})$ is the adjacency matrix 
+                    (i.e. $(a_{v,t})$ = 1 if the vertex v is linked to vertex t and 0 otherwise.). We can find the eigenvector centrality using:
+                    <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                        <img src="./images/eigenvector_user.PNG">
+                    </figure><br>
+                </li>
+            </ul>
+            
             <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             <h3 class="heading" style="margin-top:5px"> Non-Graph Algorithms </h3>
             <div class = "blank"><div class = "b">
