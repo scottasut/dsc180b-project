@@ -128,7 +128,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             and machine learning, making it a valuable solution for us. The data we downloaded from pushshift,
             each comment is given in the same format as the following example:<br>
             
-            <p class="center">{<br>
+            <div style = "padding-left:100px"><p class="center">{<br>
                 "author": "RaptorLog",<br>
                 "author_flair_css_class": "",<br>
                 "author_flair_text": "ro ru ",<br>
@@ -149,7 +149,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                 "stickied": false,<br>
                 "subreddit": "duolingo",<br>
                 "subreddit_id": "t5_2t6ze"<br>
-            }</p><br>
+            }</p><br></div>
             
             &nbsp&nbsp&nbsp&nbsp There is a lot of interesting data here, but we are most interested in the user who made the comment, the subreddit it was posted to and the
             parent comment if any. Due to the fact that any comment on Reddit is either a child of a post of another comment, we can use this parent
@@ -159,7 +159,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             mapping the data to generate our graph.<br><br>
             
             &nbsp&nbsp&nbsp&nbsp After loading our data to TigerGraph, we develop a schema that looks like so: <br>
-            <img src="./images/schema.png" style="width:30px;height:30px;position:relative;top:10px" />
+            <img src="./images/schema.png" />
             <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 3 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
         </div></div>
     <h2 class="heading" style="margin-top:5px"> Exploratory Data Analysis </h2>
