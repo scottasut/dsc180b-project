@@ -128,7 +128,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             and machine learning, making it a valuable solution for us. The data we downloaded from pushshift,
             each comment is given in the same format as the following example:<br>
             
-            <p class = "center">{<br>
+            <p class="center">{<br>
                 "author": "RaptorLog",<br>
                 "author_flair_css_class": "",<br>
                 "author_flair_text": "ro ru ",<br>
@@ -156,7 +156,10 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             relationship to generate the comment chain graph structure we will set up in TigerGraph. We then use the author field to create edges between
             user vertices identified by those author names and the comment id's as well as subreddit to comment edges using the subreddit name as an identifier
             for the subreddit vertices. Once we have the correct files specifying those vertices and edges, we simply use TigerGraph's tools for uploading and
-            mapping the data to generate our graph.<br>
+            mapping the data to generate our graph.<br><br>
+            
+            &nbsp&nbsp&nbsp&nbsp After loading our data to TigerGraph, we develop a schema that looks like so: <br>
+            <img src="./images/schema.png" style="width:30px;height:30px;position:relative;top:10px" />
             <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 3 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
         </div></div>
     <h2 class="heading" style="margin-top:5px"> Exploratory Data Analysis </h2>
