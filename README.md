@@ -14,6 +14,10 @@ Interaction Graph-Based Community Recommendation on Reddit
 - Pravar Bhandari (psbhanda@ucsd.edu)
 
 ## Overview:
+<br/>
+<div align="center">
+<img src="https://user-images.githubusercontent.com/55766484/224842781-a9657aef-54d5-4305-8a09-fce7112693a1.png"  width="600" height="300">
+</div><br/>
 
 This capstone project focuses on graph-based recommender systems for the social media platform Reddit. Users can choose to comment, subscribe, or otherwise interact in different online communities within Reddit called subreddits. Utilizing the graph database and analytics software TigerGraph, we create a recommendation model that recommends subreddits to users based on a variety of different interaction-related features.
 
