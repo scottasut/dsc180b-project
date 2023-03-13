@@ -55,12 +55,12 @@ class NetStatKNN:
         recommended = set()
         for i in indices:
             if len(recommendations) == n:
-                    break
+                break
             for j in i:
                 if len(recommendations) == n:
                     break
                 subreddit = knn_subreddit_idx_map[j]
-                if subreddit not in recommended:
+                if subreddit not in recommended and subreddit not in user_subreddits:
                     recommendations.append(subreddit)
                 recommended.add(subreddit)
         
@@ -71,8 +71,9 @@ class NetStatKNN:
         return recommendations
 
 class GNNHandler:
-    def __init__(self, data):
+    def __init__(self, data, maps):
         self.data = data
+        self.user_map, self.rev_user_map, self.subreddit_map, self.rev_subreddit_map = maps
         transform = T.RandomLinkSplit(
             num_val=0.1,
             num_test=0.1,
@@ -107,6 +108,8 @@ class GNNHandler:
             shuffle=True,
         )
         self.model = None
+        self.preds = None
+        self.truth = None
     
     def set_model(self, hidden_channels):
         self.model = Model(self.train_data, hidden_channels=hidden_channels)
@@ -132,6 +135,32 @@ class GNNHandler:
                 total_loss += float(loss) * prediction.numel()
                 total_examples += prediction.numel()
             print('Epoch {}, Loss: {}'.format(epoch, round(total_loss / total_examples, 4)))
+    
+    def predict(self):
+        self.preds = []
+        self.truth = []
+        for sample in tqdm.tqdm(self.test_loader):
+            self.preds.append(self.model(sample))
+            self.truth.append(sample['user', 'commented_in', 'subreddit'].edge_label)
+
+    def recommend(self, user, n=1):
+        if not self.preds or not self.truth:
+            raise Exception('Must call \'predict\' first.')
+
+        user_node_idx = self.user_map[user]
+
+        subreddit_node_idxs = self.train_data['subreddit'].node_id
+        user_subreddit_edge_idxs = self.test_data['user', 'commented_in', 'subreddit'].edge_index
+
+        user_subreddit_edge_mask = (user_subreddit_edge_idxs[0] == user_node_idx)
+        subreddit_node_mask = np.isin(user_subreddit_edge_idxs[1], user_subreddit_edge_idxs)
+        user_subreddit_mask = user_subreddit_edge_mask & subreddit_node_mask
+
+        user_pred_scores = torch.cat(self.preds, dim=0)[user_subreddit_mask[:-3]]
+
+        top_k_idxs = (-user_pred_scores).argsort()[:n]
+        top_k_subreddit_nodes = subreddit_node_idxs[top_k_idxs]
+        return [self.rev_subreddit_map[p.item()] for p in top_k_subreddit_nodes]
 
 class GNN(torch.nn.Module):
     def __init__(self, hidden_channels):
@@ -145,18 +174,18 @@ class GNN(torch.nn.Module):
         return x
 
 class Classifier(torch.nn.Module):
-    def forward(self, x_user: Tensor, x_movie: Tensor, edge_label_index: Tensor) -> Tensor:
+    def forward(self, x_user: Tensor, x_subreddit: Tensor, edge_label_index: Tensor) -> Tensor:
         edge_feat_user = x_user[edge_label_index[0]]
-        edge_feat_movie = x_movie[edge_label_index[1]]
-        return (edge_feat_user * edge_feat_movie).sum(dim=-1)
+        edge_feat_subreddit = x_subreddit[edge_label_index[1]]
+        return (edge_feat_user * edge_feat_subreddit).sum(dim=-1)
 
 class Model(torch.nn.Module):
     def __init__(self, data, hidden_channels):
         super().__init__()
-        self.movie_lin = torch.nn.Linear(1250, hidden_channels, dtype=torch.float64)
+        self.subreddit_lin = torch.nn.Linear(1250, hidden_channels, dtype=torch.float64)
         self.user_lin = torch.nn.Linear(1250, hidden_channels, dtype=torch.float64)
         self.user_emb = torch.nn.Embedding(data["user"].num_nodes, hidden_channels)
-        self.movie_emb = torch.nn.Embedding(data["subreddit"].num_nodes, hidden_channels)
+        self.subreddit_emb = torch.nn.Embedding(data["subreddit"].num_nodes, hidden_channels)
         self.gnn = GNN(hidden_channels)
         self.gnn = to_hetero(self.gnn, metadata=data.metadata())
         self.classifier = Classifier()
@@ -164,7 +193,7 @@ class Model(torch.nn.Module):
     def forward(self, data: HeteroData) -> Tensor:
         x_dict = {
           "user": self.user_lin(data["user"].x).float() + self.user_emb(data["user"].node_id).float(),
-          "subreddit": self.movie_lin(data["subreddit"].x).float() + self.movie_emb(data["subreddit"].node_id).float(),
+          "subreddit": self.subreddit_lin(data["subreddit"].x).float() + self.subreddit_emb(data["subreddit"].node_id).float(),
         }
         x_dict = self.gnn(x_dict, data.edge_index_dict)
         pred = self.classifier(

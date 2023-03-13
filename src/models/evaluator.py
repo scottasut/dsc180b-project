@@ -84,7 +84,8 @@ class Evaluator:
                     relevant_recs = relevant.intersection(set(recs_at_k))
                     scores[k]['p_vals'].append(len(relevant_recs) / len(recs_at_k))
                     scores[k]['r_vals'].append(len(relevant_recs) / len(relevant))
-            except:
+            except Exception as e:
+                print(e)
                 continue
         
         results = {}
