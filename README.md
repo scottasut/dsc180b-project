@@ -26,6 +26,43 @@ The website associated to this project can be found [here](https://scottasut.git
 
 Due to this project's reliance on TigerGraph's tools, our models cannot be run via a test target without access to a cluster. For a quick demo that our code which makes recommendations for a user, please refer to [this video](https://youtu.be/mfJwbF27YR0). Additionally, you may refer to `notebooks/model_testing.ipynb` to see the evaluation of the models.
 
+## Project Structure:
+```
+dsc180b-project/
+├─ docs/
+│  ├─ css/
+│  ├─ images/
+│  ├─ _config.yml
+│  ├─ index.html
+├─ notebooks/
+│  ├─ eda.ipynb
+│  ├─ model_testing.ipynb
+│  ├─ network_stats.ipynb
+│  ├─ test.ipynb
+├─ src/
+│  ├─ dataset/
+│  │  ├─ create_dataset.py
+│  │  ├─ generate_dataset.py
+│  │  ├─ make_dataset.py
+│  ├─ features/
+│  │  ├─ build_features.py
+│  ├─ models/
+│  │  ├─ baselines.py
+│  │  ├─ evaluator.py
+│  │  ├─ model.py
+│  │  ├─ models.py
+│  ├─ util/
+│  │  ├─ logger_util.py
+│  │  ├─ tigergraph_util.py
+├─ .gitignore
+├─ Dockerfile
+├─ README.md
+├─ poster.pdf
+├─ report.pdf
+├─ run.py
+├─ submission.json
+```
+
 ## Prerequisites:
 
 Beyond the packages outlines in `requirements.txt`, there are a few tools needed for this project. Namely:
