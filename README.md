@@ -17,7 +17,14 @@ Interaction Graph-Based Community Recommendation on Reddit
 
 This capstone project focuses on graph-based recommender systems for the social media platform Reddit. Users can choose to comment, subscribe, or otherwise interact in different online communities within Reddit called subreddits. Utilizing the graph database and analytics software TigerGraph, we create a recommendation model that recommends subreddits to users based on a variety of different interaction-related features.
 
-For the code checkpoint, we do not have a test target due to reliance on TigerGraph. For a quick demo that our code up to this point is working, please refer to [this video.](https://youtu.be/mfJwbF27YR0)
+The source code for the project is broken up as follows:
+- `src/dataset`: files which handle data downloading and parsing it into a heterogeneous graph representation.
+- `src/features`: files which handles the non-graph feature generation process for our graph data (users/subreddits).
+- `src/models`: our baseline and final models which actually make recommendations for users as well as an evaluation handler class. `src/models/baselines.py` contains the non-graph baseline models while `src/models/models.py` contains the graph-based final models. `src/models/evaluator.py` handles evaluation of recommendations via precision@k calculation given a testing interaction set.
+
+The website associated to this project can be found [here](https://scottasut.github.io/dsc180b-project/).
+
+Due to this project's reliance on TigerGraph's tools, our models cannot be run via a test target without access to a cluster. For a quick demo that our code which makes recommendations for a user, please refer to [this video](https://youtu.be/mfJwbF27YR0). Additionally, you may refer to `notebooks/model_testing.ipynb` to see the evaluation of the models.
 
 ## Prerequisites:
 
@@ -108,7 +115,7 @@ belongs_to
 
 #### Important Usage Notes:
 - Your TigerGraph cluster must be on when calling any of the functions here which use `pyTigerGraph` otherwise a connection will not be able to be established. If you are experiencing connection errors, ensure that the cluster you are using is indeed turned on.
-- The `data` and `feature` target processes can be configured in a couple of ways via a mandatory file `configs/setup.json` which contains the following:
+- The `data` and `feature` target processes can be configured in a couple of ways via a mandatory file `configs/setup.json` which contains the following where `year`, `month`, `test_year`, `test_month` specify the years and months which training and testing data should be pulled from Reddit respectively and `keywords` specifies the number of keywords we save from a user's comment history (and by extension the size of their keyword embeddings). *Note that more recent data within Reddit is larger and will increase the computational needs for almost every aspect of the project. To see where the data is pulled from and see the file sizes, please refer [here](https://files.pushshift.io/reddit/comments/)*.
 ```
 {
     "year": "2010",
@@ -120,7 +127,9 @@ belongs_to
 ```
 
 ## Resources:
-- [Reddit API](https://www.reddit.com/dev/api/)
-- [Reddit Network Explorer](https://github.com/memgraph/reddit-network-explorer)
+- [Course Site](https://dsc-capstone.github.io/)
+- [Project Specifications](https://dsc-capstone.github.io/assignments/projects/q2/)
+- [TigerGraph](https://www.tigergraph.com/)
+- [TigerGraph Cloud](https://tgcloud.io/)
 - [Reddit Comment Datasets](https://files.pushshift.io/reddit/comments/)
 - [TigerGraph Community ML Algos](https://docs.tigergraph.com/graph-ml/current/community-algorithms/)
