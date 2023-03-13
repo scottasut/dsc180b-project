@@ -31,7 +31,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             The social media platform Reddit is a massive collection of forums where people can share news and content.
             Reddit is made up of more than a million communities known as subreddits; each subreddit consists of a different topic.
             Users in these subreddits can make posts and comments to interact with other users, essentially forming communities with specific interests.
-            As of 2022, Reddit has 50 million daily active Reddit users worldwide\cite{lin_2022}. Reddit users are often recommended subreddits based
+            As of 2022, Reddit has 50 million daily active Reddit users worldwide. Reddit users are often recommended subreddits based
             on those they have visited or interacted with. Like many other social media platforms, Reddit's
             comment representation is a tree structure where separate replies to a comment are branches. We can think of conversation in one of these trees
             as a comment chain, that is, a set of comments where each one (apart from the first comment) is a reply to one preceding it.
@@ -42,7 +42,24 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             subreddit communities they are a part of, immediately exposing them to similar communities may be beneficial in making them recurring
             users rather than one-time users. From a graph perspective, this problem is worth investigating as it can evaluate the relevancy of user
             interactions in a graph-like comment interaction structure as a basis for recommendation systems. We use a graph-based machine learning
-            algorithm that assists in recommending subreddits to users based upon their interactions with other users in subreddits through comment chains.<br>
+            algorithm that assists in recommending subreddits to users based upon their interactions with other users in subreddits through comment chains.<br><br>
+            
+            Previous work has been done in the space of subreddit recommendation. In one attempt, a subreddit-to-subreddit interest network was built, where two
+            subreddits are connected if a large portion of one subreddit's members are also active in the other. The model they use is K-means clustering, with
+            another choosing to use the K-Nearest Neighbors algorithm. These examples along with others are not necessarily graph-based. Where graph community
+            detection tasks of subreddits are used, the graphs are represented in relatively simple ways, primarily incorporating user and subreddit subscription
+            relationships and using that data to make recommendations using "non-graphy" criteria such as similarity scores like Jaccard. By contrast, we look to
+            use additional information which can be represented as graphs such as interactions between different users within subreddits in an attempt to leverage
+            that interaction information as an indicator of user’s affinity for different communities/subreddits. We aim to use collaborative filtering encoded
+            within our algorithm with user interactions to then accurately recommend subreddits to users.<br><br>
+            
+            In order to create an algorithm ourselves, we use a dataset provided and maintained by Jason Baumgartner which can be downloaded via their website
+            <a href="https://pushshift.io/">pushshift.io</a> at its <a href="https://files.pushshift.io/reddit/">data directory subdomain</a>. There, data for Reddit
+            users, subreddits, posts and comments among other things are hosted in monthly time increments going back to Reddit's inception in 2005. In order to ensure
+            we didn't face any hardware limitations, we opted to use all comments prior to 2011 (2005 - Dec. 2010). However, because the data across all time periods
+            is formatted in the same way, our work could easily be scaled up simply by downloading and using the more recent files. From it, we build a graph with 2
+            different types of nodes and 2 types of edges. Our 2 nodes are: User nodes and Subreddit nodes. Our first edge, interacted_with, connects
+            users who interacted with other users. Second, the commented_in edge connects subreddits to users.
             <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
         </div></div>
     
