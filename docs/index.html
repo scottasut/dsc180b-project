@@ -335,7 +335,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             &nbsp&nbsp&nbsp&nbsp After completing our EDA, we aim to develop baseline models for community detection so as to compare these to our final model. 
             We develop baseline models: K-Nearest Neighbors, a recommender system using Jaccard similarity, and a simple popularity prediction model. 
             These baselines are not necessarily graph-based, but they help us to set and measure the baseline to then build upon for our final model.
-            <ol>
+            <div class = "blank"><ol>
                 <li>The K-Nearest Neighbors algorithm we develop uses cosine similarity as the metric, and chooses 20 neighbors. Cosine similarity is a measure
                     of similarity between two data points in a plane, and in a KNN is used to determine the distance between two points. This can be found 
                     mathematically as follows:<br>
@@ -343,7 +343,16 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                         <img src="./images/knn_equation.PNG">
                     </figure><br>
                 </li>
-            </ol>
+                <li> The recommender system we develop uses Jaccard similarity to recommend subreddits to users. The Jaccard index is used to gauge the similarity 
+                    and diversity of sets, and can be determined mathematically as follows:
+                    <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                        <img src="./images/jaccard_equation.PNG">
+                    </figure><br>
+                </li>
+                <li> A final baseline we tried was a simple popularity predictor model, which recommends users the most popular subreddits that they are not already 
+                    subscribed to.
+                </li>
+            </ol></div>
             <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             <h3 class="heading" style="margin-top:5px"> Non-Graph Algorithms </h3>
             <div class = "blank"><div class = "b">
