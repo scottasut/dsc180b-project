@@ -175,18 +175,167 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             Looking at Figure 1, subreddits that seem more broad and common like 'gaming' and 'pics' are in the top 10 subreddits. 
             Since they are broad, it is more likely that users will join these and be interested in these subreddits. In Figure 2, 
             we look into the distribution of the number of comments made by users:<br>
-            <figure>
-                <img src="./images/distr_num_comments.png" style="width:50%">
+            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                <img src="./images/distr_num_comments.png">
                 <figcaption>Fig 2 - Distribution of number of comments made by users</figcaption>
             </figure><br>
+            We see that 27% of users have made 1 comment, 41% of users have made between 2 and 10 comments, and 31% of users have made more than 10 comments.<br>
+
+            Next, we look into the karma of users. On Reddit, karma is a score of a user/comment that is determined by the sum of all upvotes minus the sum of
+            all downvotes. It is usually displayed publically next to the upvote and downvote buttons. First we look into the average karma for a comment by
+            subreddit:<br>
+            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                <img src="./images/avg_karma_subreddit.png">
+                <figcaption>Fig 3 - Average Karma for a Comment by Subreddit</figcaption>
+            </figure><br>
+            In Figure 3, we can see that most of these subreddits have an average karma for comments in the subreddit between 0 and 3.
+            Next, we look into the average karma for a comment by user:<br>
+            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                <img src="./images/avg_karma_users.png">
+                <figcaption>Fig 4 - Average Karma for a Comment by User</figcaption>
+            </figure><br>
+            In Figure 4, we see that once again, a large majority of users have an average karma between 0 and 5 for their comments.
+            Finally, we also analyze the distribution of users by karma:<br>
+            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                <img src="./images/distr_karma_user.png">
+                <figcaption>Fig 5 - Distribution of Users by Karma</figcaption>
+            </figure><br>
             
+            Figure 5 shows that a majority of users have between 1 and 100 karma associated with their accounts, while few users have negative karma.
+            After this, we aim to look at the volume of comments by day. From our dataset, we find that the majority of comments are made in the month of December.
+            Looking at Figure 6:<br>
+            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                <img src="./images/volume_by_day.png">
+                <figcaption>Fig 6 - Volume of Comments by Day (December)</figcaption>
+            </figure><br>
+            This doesn't give us much insight into large trends, but we do see that for the most part, there are several days where the volume of comments seems 
+            to be relatively similar to one another, meaning that there does not seem to be a special relationship between day of month and number of comments.
+
+            Finally, we delve a bit deeper into comment chains, as that is where the biggest focus of our model is. We find that we have 942,558 comment 
+            chains in our data. Figure 7 shows the distribution of comment chain lengths.<br>
+            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                <img src="./images/cmt_chain_length_distr.png">
+                <figcaption>Fig 7 - Distribution of Comment Chain Lengths</figcaption>
+            </figure><br>
+            
+            From Figure 7, we can see that the majority of comments do not actually belong to a comment chain. This means that the comment was posted and no-one 
+            replied. These data are likely not very useful in generating meaningful metrics for recommendation based on user comment interactions.
+
+            However, 45% of the comment data are part of chains with 41% being 'small' chains of only 2 - 10 comments and the other 4% being long chains with over 10
+            comments. We can examine the distributions of both of these groups:<br>
+            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                <img src="./images/cmt_chain_length_distr_clean.png">
+                <figcaption>Fig 8 - Distribution of Comment Chain Lengths (2-10 and 10+)</figcaption>
+            </figure><br>
+            As we might expect, we generally have less chains of longer lengths. In short, there are mostly smaller chains in the data but the distribution is 
+            heavily right-skewed due to some very long chains.<br>
+            Now we look at some data such as the number of users in each chain and the number of times users tend to interact in a chain. 
+            Figure 9 details the number of unique users per chain:<br>
+            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                <img src="./images/distr_users_chains.png">
+                <figcaption>Fig 9 - Distribution of Unique Users in Chains</figcaption>
+            </figure><br>
+            
+            Next, we look at the ratio between the number of unique users in a chain and the total number of comments in that chain. This tells us 
+            how unique the set of users participating in a chain is. Smaller ratios means there is less diversity. We find that the chains are generally 
+            quite diverse as, on average, the number of unique users is very close to the total number of comments. However, because we are including 
+            chains of length one which the ration is guaranteed to be 1.0 for, this value is quite skewed. We remove those and try again:
+            
+            <table>
+                <tr>
+                    <td>\textbf{Minimum Number in Chain}</td>
+                    <td>\textbf{count}</td>
+                    <td>\textbf{mean}</td>
+                    <td>\textbf{std}</td>
+                    <td>\textbf{min}</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>428186.0</td>
+                    <td>0.864</td>
+                    <td>0.202</td>
+                    <td>0.016</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>203798.0</td>
+                    <td>0.829</td>
+                    <td>0.202</td>
+                    <td>0.016</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>117313.0</td>
+                    <td>0.811</td>
+                    <td>0.197</td>
+                    <td>0.016</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>76377.0</td>
+                    <td>0.800</td>
+                    <td>0.191</td>
+                    <td>0.016</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>54273.0</td>
+                    <td>0.793</td>
+                    <td>0.186</td>
+                    <td>0.016</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>40719.0</td>
+                    <td>0.788</td>
+                    <td>0.181</td>
+                    <td>0.074</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>32033.0</td>
+                    <td>0.784</td>
+                    <td>0.176</td>
+                    <td>0.085</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>25871.0</td>
+                    <td>0.781</td>
+                    <td>0.173</td>
+                    <td>0.085</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>21444.0</td>
+                    <td>0.779</td>
+                    <td>0.17</td>
+                    <td>0.085</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>18123.0</td>
+                    <td>0.777</td>
+                    <td>0.166</td>
+                    <td>0.085</td>
+                </tr>
+            </table>
+            
+            This is more indicative of the data we wanted to see. Now, as we move towards larger and larger chains, the average ratio of unique users 
+            seems to plataeu at ~0.78 as indicated by Figure 10.<br>
+            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                <img src="./images/avg_unique_users_chain.png">
+                <figcaption>Fig 10 - Average Ratio of Unique Users in Chains</figcaption>
+            </figure><br>
             
             <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 4 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
         </div></div>
     <h2 class="heading" style="margin-top:5px"> Baselines </h2>
         <div class = "blank"><div class = "b">
-            Let us look into some baselines...
-            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+            &nbsp&nbsp&nbsp&nbsp After completing our EDA, we aim to develop baseline models for community detection so as to compare these to our final model. 
+            We develop baseline models: K-Nearest Neighbors, a recommender system using Jaccard similarity, and a simple popularity prediction model. 
+            These baselines are not necessarily graph-based, but they help us to set and measure the baseline to then build upon for our final model.
+            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             <h3 class="heading" style="margin-top:5px"> Non-Graph Algorithms </h3>
             <div class = "blank"><div class = "b">
                 This is the Non-Graph Algorithms section.
