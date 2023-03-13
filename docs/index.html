@@ -44,7 +44,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             interactions in a graph-like comment interaction structure as a basis for recommendation systems. We use a graph-based machine learning
             algorithm that assists in recommending subreddits to users based upon their interactions with other users in subreddits through comment chains.<br><br>
             
-            Previous work has been done in the space of subreddit recommendation. In one attempt, a subreddit-to-subreddit interest network was built, where two
+            &nbsp&nbsp&nbsp&nbsp Previous work has been done in the space of subreddit recommendation. In one attempt, a subreddit-to-subreddit interest network was built, where two
             subreddits are connected if a large portion of one subreddit's members are also active in the other. The model they use is K-means clustering, with
             another choosing to use the K-Nearest Neighbors algorithm. These examples along with others are not necessarily graph-based. Where graph community
             detection tasks of subreddits are used, the graphs are represented in relatively simple ways, primarily incorporating user and subreddit subscription
@@ -53,7 +53,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             that interaction information as an indicator of user’s affinity for different communities/subreddits. We aim to use collaborative filtering encoded
             within our algorithm with user interactions to then accurately recommend subreddits to users.<br><br>
             
-            In order to create an algorithm ourselves, we use a dataset provided and maintained by Jason Baumgartner which can be downloaded via their website
+            &nbsp&nbsp&nbsp&nbsp In order to create an algorithm ourselves, we use a dataset provided and maintained by Jason Baumgartner which can be downloaded via their website
             <a href="https://pushshift.io/">pushshift.io</a> at its <a href="https://files.pushshift.io/reddit/">data directory subdomain</a>. There, data for Reddit
             users, subreddits, posts and comments among other things are hosted in monthly time increments going back to Reddit's inception in 2005. In order to ensure
             we didn't face any hardware limitations, we opted to use all comments prior to 2011 (2005 - Dec. 2010). However, because the data across all time periods
@@ -94,8 +94,19 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                     <td>Comments-Comments</td>
                     <td>Comments that are connected in a comment chain</td>
                 </tr>
-            </table>
-            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+            </table><br><br>
+            
+            &nbsp&nbsp&nbsp&nbsp All of the edges in this dataset are undirected, meaning that the relationship between any edge $(v_i, v_j)$ in the graph is mutual. In total,
+            our graph contains $\sim172,000$ total vertices and $\sim1,200,000$ edges. In a bit more detail, the graph contains $2,929$ unique subreddit vertices, 
+            and $\sim170,000$ user vertices along with $\sim865,000$ "interacted\textunderscore with" edges and $\sim345,000$ "commented\_in" edges.<br><br>
+
+            &nbsp&nbsp&nbsp&nbsp In particular, this dataset allows us to make this evaluation on a network like the one that can be derived from Reddit. That is, one which encodes
+            information about the interaction of users with other users within pre-defined communities. However, as many social media platforms use very similar
+            representations for the links between users, this data can hopefully allow us to make more broad claims about social graphs and their usefulness in making
+            predictions about users preferred communities.<br><br>
+            
+            
+            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 1 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
         </div></div>
     
     <h2 class="heading" style="margin-top:5px"> Why Graph? </h2>
