@@ -28,7 +28,7 @@ The source code for the project is broken up as follows:
 
 The website associated to this project can be found [here](https://scottasut.github.io/dsc180b-project/).
 
-Due to this project's reliance on TigerGraph's tools, our models cannot be run via a test target without access to a cluster. For a quick demo that our code which makes recommendations for a user, please refer to [this video](https://youtu.be/mfJwbF27YR0). Additionally, you may refer to `notebooks/model_testing.ipynb` to see the evaluation of the models.
+Due to this project's reliance on TigerGraph's tools, our models cannot be run via a test target without access to a cluster. For a quick demo that our code which makes recommendations for a user, please refer to [this video](https://www.youtube.com/watch?v=fD63_7fDCcM). Additionally, you may refer to `notebooks/model_testing.ipynb` to see the evaluation of the models.
 
 ## Project Structure:
 ```
