@@ -59,13 +59,54 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             we didn't face any hardware limitations, we opted to use all comments prior to 2011 (2005 - Dec. 2010). However, because the data across all time periods
             is formatted in the same way, our work could easily be scaled up simply by downloading and using the more recent files. From it, we build a graph with 2
             different types of nodes and 2 types of edges. Our 2 nodes are: User nodes and Subreddit nodes. Our first edge, interacted_with, connects
-            users who interacted with other users. Second, the commented_in edge connects subreddits to users.
+            users who interacted with other users. Second, the commented_in edge connects subreddits to users.<br><br>
+            
+            <table>
+                <tr>
+                    <td>Dataset Name</td>
+                    <td>Contents</td>
+                </tr>
+                <tr>
+                    <td>Users-Users</td>
+                    <td>Connects users who interacted with one another</td>
+                </tr>
+                <tr>
+                    <td>Subreddits</td>
+                    <td>All Subreddits in the dataset</td>
+                </tr>
+                <tr>
+                    <td>Subreddits-Comments</td>
+                    <td>All comments and the subreddit they were made in</td>
+                </tr>
+                <tr>
+                    <td>Users</td>
+                    <td>All users in the dataset</td>
+                </tr>
+                <tr>
+                    <td>Users-Comments</td>
+                    <td>Comments and users who made the comments</td>
+                </tr>
+                <tr>
+                    <td>Comments</td>
+                    <td>All comments in the dataset</td>
+                </tr>
+                <tr>
+                    <td>Comments-Comments</td>
+                    <td>Comments that are connected in a comment chain</td>
+                </tr>
+            </table>
             <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
         </div></div>
     
     <h2 class="heading" style="margin-top:5px"> Why Graph? </h2>
         <div class = "blank"><div class = "b">
-            This is the section for explaining why graph could/should be used...
+            Graph theory has existed for decades, but advancements in computing power and introduction
+            of large-scale graph databases like TigerGraph have allowed applications of graph algorithms to a
+            wide range of domains. Traditional data methods, like representing data tabularly, are less effective
+            in representing complex relationships; rows are observations, columns are variables. This can be
+            limiting for data that has many associated variables and complex relationships. We believe that user-
+            subreddit/user-user relationships are better represented as graphs, which makes representation
+            flexible.
             <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
         </div></div>
     
