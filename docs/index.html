@@ -94,7 +94,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                     <td>Comments-Comments</td>
                     <td>Comments that are connected in a comment chain</td>
                 </tr>
-            </table><br><br>
+            </table><br>
             
             &nbsp&nbsp&nbsp&nbsp All of the edges in this dataset are undirected, meaning that the relationship between any edge (v_<sub>i</sub>, v_<sub>j</sub>)
             in the graph is mutual. In total, our graph contains ~172,000 total vertices and ~1,200,000 edges. In a bit more detail, the graph contains 2,929
@@ -111,14 +111,14 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
     
     <h2 class="heading" style="margin-top:5px"> Why Graph? </h2>
         <div class = "blank"><div class = "b">
-            Graph theory has existed for decades, but advancements in computing power and introduction
-            of large-scale graph databases like TigerGraph have allowed applications of graph algorithms to a
-            wide range of domains. Traditional data methods, like representing data tabularly, are less effective
-            in representing complex relationships; rows are observations, columns are variables. This can be
-            limiting for data that has many associated variables and complex relationships. We believe that user-
-            subreddit/user-user relationships are better represented as graphs, which makes representation
-            flexible.
-            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+            &nbsp&nbsp&nbsp&nbsp We decide to explore graph-based representations of data for good reason. Graph theory has existed for decades, but advancements in computing power
+            and introduction of large-scale graph databases like TigerGraph have allowed applications of graph algorithms to a wide range of domains. Traditional
+            data methods, like representing data tabularly, are less effective in representing complex relationships; rows are  observations, columns are  variables.
+            This can be limiting for data that has many associated variables and complex relationships, as tabular data is less effective. We believe that
+            user-subreddit and user-user relationships would be better represented as graphs, which makes representation more flexible. Especially for Reddit, 
+            like many other social media platforms, their comment representation is a tree structure where separate replies to a comment are branches, which is well 
+            represented by graphs.
+            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 2 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
         </div></div>
     
     <h2 class="heading" style="margin-top:5px"> Data Preparation </h2>
