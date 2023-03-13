@@ -126,35 +126,30 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             &nbsp&nbsp&nbsp&nbsp  In order to fully leverage the graph structure of our data, we use <a href="https://www.tigergraph.com/">TigerGraph</a>,
             a graph analytics platform which provides a myriad of tools and resources for graph-based data science
             and machine learning, making it a valuable solution for us. The data we downloaded from pushshift,
-            each comment is given in the same format as the following example:
+            each comment is given in the same format as the following example:<br>
             
-            <code>{<br>
-                    "author": "RaptorLog",<br>
-                    "author_flair_css_class": "",<br>
-                }
-            </code>
-            {
-                "author": "RaptorLog",
-                "author_flair_css_class": "",
-                "author_flair_text": "ro ru ",
-                "body": "Oh, I have been going crazy...",
-                "can_gild": true,
-                "controversiality": 0,
-                "created_utc": 1506816002,
-                "distinguished": null,
-                "edited": false,
-                "gilded": 0,
-                "id":"dnqik36",
-                "is_submitter": true,
-                "link_id": "t3_73g6fg",
-                "parent_id": "t1_dnqf2cj",
-                "permalink": "/r/duolingo/comments/73g6fg/...",
-                "retrieved_on": 1509189607,
-                "score": 32,
-                "stickied": false,
-                "subreddit": "duolingo",
-                "subreddit_id": "t5_2t6ze"
-            }
+            <p>{<br>
+                "author": "RaptorLog",<br>
+                "author_flair_css_class": "",<br>
+                "author_flair_text": "ro ru ",<br>
+                "body": "Oh, I have been going crazy...",<br>
+                "can_gild": true,<br>
+                "controversiality": 0,<br>
+                "created_utc": 1506816002,<br>
+                "distinguished": null,<br>
+                "edited": false,<br>
+                "gilded": 0,<br>
+                "id":"dnqik36",<br>
+                "is_submitter": true,<br>
+                "link_id": "t3_73g6fg",<br>
+                "parent_id": "t1_dnqf2cj",<br>
+                "permalink": "/r/duolingo/comments/73g6fg/...",<br>
+                "retrieved_on": 1509189607,<br>
+                "score": 32,<br>
+                "stickied": false,<br>
+                "subreddit": "duolingo",<br>
+                "subreddit_id": "t5_2t6ze"<br>
+            }</p><br>
             There is a lot of cool data here, but we are most interested in the user who made the comment,
             the subreddit it was posted to and the parent comment if any. Due to the fact that any comment
             on Reddit is either a child of a post of another comment, we can use this parent relationship
