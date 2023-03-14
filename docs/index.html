@@ -389,15 +389,19 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/louvain.PNG">
                         </figure><br>
-                        where  A<sub>ij</sub> represents the edge weight between nodes i and j, k<sub>i</sub> and k<sub>j</sub> are the sum of the weights of the 
-                        edges attached to the nodes i and j, respectively. m is the sum of all the edge weights in the graph, c<sub>i</sub> and c<sub>j</sub> are the 
-                        communities of the nodes, and &delta; is the Kronecker delta function (	&delta;(x,y) = 1 if x = y, 0 otherwise)<br><br>
+                where  <span style="font-style:italic">A<sub>ij</sub></span> represents the edge weight between nodes <span style="font-style:italic">i<span> and <span style="font-style:italic">j</span>, 
+                <span style="font-style:italic">k<sub>i</sub></span> and <span style="font-style:italic">k<sub>j</sub></span> are the sum of the weights of the 
+                        edges attached to the nodes <span style="font-style:italic">i<span> and <span style="font-style:italic">j</span>, respectively. 
+                <span style="font-style:italic">m</span> is the sum of all the edge weights in the graph, <span style="font-style:italic">c<sub>i</sub></span>
+                and <span style="font-style:italic">c<sub>j</sub></span> are the 
+                        communities of the nodes, and <span style="font-style:italic">&delta;</span> is the Kronecker delta function (	<span style="font-style:italic">&delta;(x,y)</span> = 1 if <span style="font-style:italic">x = y</span>, 
+                0 otherwise)<br><br>
                 <span style="font-weight:bold">Label Propagation Algorithm:</span> The Label Propagation Algorithm (LPA) is a fast algorithm for finding communities in a graph. The LPA works by 
                         propagating labels throughout the network and forming communities based on this process. The intuition behind this algorithm is that a single 
                         label can quickly become dominant in a densely connected group of nodes, but will have trouble crossing a sparsely connected region. 
                         Labels will get trapped inside a densely connected group of nodes, and those nodes that end up with the same label when the algorithms 
                         finish can be considered part of the same community. LPA works as follows:<br><br>
-                        <ol style="font-size:12px;text-align:center">
+                        <ol style="font-size:12px;padding:25px">
                             <li>Every node is initialized with a unique community label, an identifier.</li>
                             <li>These labels propagate through the network.</li>
                             <li>At every iteration of propagation, each node updates its label to the one that the maximum number of its neighbors belongs to. 
