@@ -334,7 +334,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/knn_equation.PNG">
                         </figure><br>
-                        where <i>A</i> and <i>B</i> are two vectors of attributes.<br><br>
+                        where <span style="font-style:italic">A</span> and <span style="font-style:italic">B</span> are two vectors of attributes.<br><br>
                     The recommender system we develop uses <span style="font-weight:bold">Jaccard similarity</span> to recommend subreddits to users. The Jaccard index is used to gauge the similarity 
                         and diversity of sets, and can be determined mathematically as follows:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
@@ -349,24 +349,27 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                 We then build simple algorithms in TigerGraph to calculate several different centrality-based metrics based on our graph network:<br><br>
                 
                 <span style="font-weight:bold">Closeness for Users:</span> a measure of the average farness (inverse distance) to all other user nodes. 
-                        Nodes with a high closeness score have the shortest distance to all other nodes. The closeness of a node <i>x</i> is determined by:<br>
+                        Nodes with a high closeness score have the shortest distance to all other nodes. The closeness of a node <span style="font-style:italic">x</span> is determined by:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/closeness_user.PNG">
                         </figure><br>
-                        where <i>N</i> is the number of nodes in the graph, and <i>d(y,x)</i> is the length of the shortest path between user vertices <i>x</i> 
+                        where <span style="font-style:italic">N</span> is the number of nodes in the graph, and <span style="font-style:italic">d(y,x)</span> is the length of 
+                the shortest path between user vertices <span style="font-style:italic">x</span> 
                         and <i>y</i>. <br><br>
                 <span style="font-weight:bold">Betweenness for Users:</span> This is a measure of the percentage of shortest paths to other users that must go through a specific user node. 
                         A user node with high betweenness is likely to be aware of what is going on in multiple circles. The equation for betweenness of a given 
-                        node <i>u</i> is:<br>
+                        node <span style="font-style:italic">u</span> is:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/between_user.PNG">
                         </figure><br>
-                        where &sigma;<sub>v,w</sub> is the total number of shortest paths from node <i>v</i> to node <i>w</i>, and &sigma;<sub>v,w</sub>(<i>u</i>) is the total number of shortest 
-                        paths from node <i>v</i> to node <i>w</i> that pass through <i>u</i>.
+                where <span style="font-style:italic">&sigma;<sub>v,w</sub></span> is the total number of shortest paths from node <span style="font-style:italic">v</span> 
+                to node <span style="font-style:italic">w</span>, and <span style="font-style:italic">&sigma;<sub>v,w</sub>(u)</span> is the total number of shortest 
+                        paths from node <span style="font-style:italic">v</span> to node <span style="font-style:italic">w</span> that pass through <span style="font-style:italic">u</span>.
                     <br><br>
                 <span style="font-weight:bold">Eigenvector for Users:</span> eigenvector centrality is a measure of the influence of a node in a network. A high score means that a node is connected 
-                        to many nodes who have high scores. For a given graph <i>G</i> := (<i>V, E</i>)$ with |<i>V</i>| vertices, where <i>A</i> = <i>a</i><sub>v,t</sub> is the adjacency matrix 
-                        (i.e. <i>a</i><sub>v,t</sub> = 1 if the vertex <i>v</i> is linked to vertex <i>t</i> and 0 otherwise.). We can find the eigenvector centrality using:<br>
+                        to many nodes who have high scores. For a given graph <span style="font-style:italic">G := (<i>V, E</i>)</span> with |<span style="font-style:italic">V</span>| 
+                vertices, where <span style="font-style:italic">A = a<sub>v,t</sub></span> is the adjacency matrix 
+                (i.e. <span style="font-style:italic">a<sub>v,t</sub></span> = 1 if the vertex <span style="font-style:italic">v</span> is linked to vertex <span style="font-style:italic">t</span> and 0 otherwise.). We can find the eigenvector centrality using:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/eigenvector_user.PNG">
                         </figure>
