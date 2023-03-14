@@ -388,7 +388,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                 <span style="font-weight:bold">Louvain Algorithm:</span> Louvain is a greedy community detection algorithm that focuses on optimizing modularity, which measures the relative 
                         density of edges inside communities with respect to edges outside communities. By optimizing modularity, Louvain results in the best 
                         possible grouping of nodes of a given network. In Louvain, small communities are first found by optimizing modularity locally on all nodes, 
-                        then each small community is grouped into one node and the first step is repeated. The value modularity, Q is defined as:<br>
+                        then each small community is grouped into one node and the first step is repeated. The value modularity, <span style="font-style:italic">Q</span> is defined as:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/louvain.PNG">
                         </figure><br>
@@ -404,7 +404,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                         label can quickly become dominant in a densely connected group of nodes, but will have trouble crossing a sparsely connected region. 
                         Labels will get trapped inside a densely connected group of nodes, and those nodes that end up with the same label when the algorithms 
                         finish can be considered part of the same community. LPA works as follows:
-                        <ol style="font-size:12px;padding:50px">
+                        <ol style="font-size:12px;padding:25px">
                             <li>Every node is initialized with a unique community label, an identifier.</li>
                             <li>These labels propagate through the network.</li>
                             <li>At every iteration of propagation, each node updates its label to the one that the maximum number of its neighbors belongs to. 
@@ -412,7 +412,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                             </li>
                             <li>LPA reaches convergence when each node has the majority label of its neighbors.</li>
                             <li>LPA stops if either convergence, or the user-defined maximum number of iterations is achieved.</li>
-                        </ol><br>
+                        </ol>
                 
                 <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5.3 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             </div></div>
