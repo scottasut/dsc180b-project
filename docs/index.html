@@ -334,53 +334,49 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/knn_equation.PNG">
                         </figure><br>
-                        where <i>A</i> and <i>B</i> are two vectors of attributes.
+                        where <i>A</i> and <i>B</i> are two vectors of attributes.<br><br>
                     The recommender system we develop uses Jaccard similarity to recommend subreddits to users. The Jaccard index is used to gauge the similarity 
-                        and diversity of sets, and can be determined mathematically as follows:
+                        and diversity of sets, and can be determined mathematically as follows:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/jaccard_equation.PNG">
-                        </figure><br>
+                        </figure><br><br>
                     A final baseline we tried was a simple popularity predictor model, which recommends users the most popular subreddits that they are not already 
-                        subscribed to.
+                        subscribed to.<br>
                 <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5.1 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             </div></div>
             <h3 class="heading" style="margin-top:5px"> Centrality Algorithms </h3>
             <div class = "blank"><div class = "b">
                 We then build simple algorithms in TigerGraph to calculate several different centrality-based metrics based on our graph network:<br><br>
-                <ul>
-                    <li>Closeness for Users: a measure of the average farness (inverse distance) to all other user nodes. 
+                
+                Closeness for Users: a measure of the average farness (inverse distance) to all other user nodes. 
                         Nodes with a high closeness score have the shortest distance to all other nodes. The closeness of a node <i>x</i> is determined by:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/closeness_user.PNG">
                         </figure><br>
                         where <i>N</i> is the number of nodes in the graph, and <i>d(y,x)</i> is the length of the shortest path between user vertices <i>x</i> 
-                        and <i>y</i>. <br>
-                    </li><br>
-                    <li>Betweenness for Users: This is a measure of the percentage of shortest paths to other users that must go through a specific user node. 
+                        and <i>y</i>. <br><br>
+                Betweenness for Users: This is a measure of the percentage of shortest paths to other users that must go through a specific user node. 
                         A user node with high betweenness is likely to be aware of what is going on in multiple circles. The equation for betweenness of a given 
-                        node <i>u</i> is:
+                        node <i>u</i> is:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/between_user.PNG">
                         </figure><br>
                         where &sigma;<sub>v,w</sub> is the total number of shortest paths from node <i>v</i> to node <i>w</i>, and &sigma;<sub>v,w</sub>(<i>u</i>) is the total number of shortest 
                         paths from node <i>v</i> to node <i>w</i> that pass through <i>u</i>.
-                    </li><br>
-                    <li> Eigenvector for Users: eigenvector centrality is a measure of the influence of a node in a network. A high score means that a node is connected 
+                    <br><br>
+                Eigenvector for Users: eigenvector centrality is a measure of the influence of a node in a network. A high score means that a node is connected 
                         to many nodes who have high scores. For a given graph <i>G</i> := (<i>V, E</i>)$ with |<i>V</i>| vertices, where <i>A</i> = <i>a</i><sub>v,t</sub> is the adjacency matrix 
-                        (i.e. <i>a</i><sub>v,t</sub> = 1 if the vertex <i>v</i> is linked to vertex <i>t</i> and 0 otherwise.). We can find the eigenvector centrality using:
+                        (i.e. <i>a</i><sub>v,t</sub> = 1 if the vertex <i>v</i> is linked to vertex <i>t</i> and 0 otherwise.). We can find the eigenvector centrality using:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/eigenvector_user.PNG">
                         </figure>
-                    </li>
-                    <li> Degree Centrality for Users: The number of edges a user node has. The higher the degree, the more central this user is.</li><br>
-                    <li> Degree Centrality for Comments: The number of edges a comment node has. The higher the degree, the more central this comment is.</li><br>
-                    <li> PageRank for Comments: PageRank counts the number and quality of links to a comment to determine how important that comment is, assuming 
-                        that that comment is more likely to receive more connections to other comments.
-                    </li><br>
-                    <li> PageRank for Users: PageRank counts the number and quality of links to a comment to determine how important that comment is, assuming that 
-                        that comment is more likely to receive more connections to other comments.
-                    </li><br>
-                </ul>
+                    <br><br>
+                Degree Centrality for Users: The number of edges a user node has. The higher the degree, the more central this user is.</li><br><br>
+                Degree Centrality for Comments: The number of edges a comment node has. The higher the degree, the more central this comment is.</li><br><br>
+                PageRank for Comments: PageRank counts the number and quality of links to a comment to determine how important that comment is, assuming 
+                        that that comment is more likely to receive more connections to other comments.<br><br>
+                PageRank for Users: PageRank counts the number and quality of links to a comment to determine how important that comment is, assuming that 
+                        that comment is more likely to receive more connections to other comments.<br>
                 <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5.2 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             </div></div>
             <h3 class="heading" style="margin-top:5px"> Community Detection Algorithms </h3>
