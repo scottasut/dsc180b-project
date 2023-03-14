@@ -116,43 +116,13 @@ Once you have TigerGraph up and running, you need to be able to authenticate you
 While we worked in TigerGraph, we needed to have a file `my-cert.txt` located in our local machine's root directory `~`. Please refer to [this](https://dev.tigergraph.com/forum/t/tigergraph-python-connection-issue/2776) thread for information on how to get that file.
 
 ## Usage:<a name="usage"></a>
-In order to run the different components of the project, you will interact with the `run.py` file. There are three main 'targets' or arguments you can pass to the script when running it to work with the project: `data`, `features`, `...`
+In order to run the different components of the project, you will interact with the `run.py` file. There are two main 'targets' or arguments you can pass to the script when running it to work with the project: `data`, `features`. Due to the nature of the project and reliance on running TGCloud instance, testing targets are not available out of the box.
 
 - `data`: downloads the raw data and parses it into a heterogeneous graph format
 - `features`: generates necessary features for final model from raw data. Depends on the `data` target.
-- `...`: runs the final model. Depends on `feature` target and [data loaded into your TigerGraph cluster](#workingwithtigergraph).
 
-Targets can be called as follows `python run.py data features ...`.
+Targets can be called as follows `python run.py data features`.
 
-<!-- #### Nodes
-
-This graph is heterogeneous, meaning that there are multiple classes of nodes/vertices involved: class “user”, class “subreddit”, and class “comment”. Each class of vertex has their own attributes associated with them, some of which are already existing from the original features of the data and some that are created during feature engineering. The attributes of our vertices can be found below: 
-
- user
-![user](https://user-images.githubusercontent.com/71921141/218294775-498e8fc5-dc21-4321-8367-37777dec8a2d.png)
-
-subreddits
-![subreddits](https://user-images.githubusercontent.com/71921141/218294707-0d1667b3-fda0-4916-be4f-6b784192e7da.png)
-
-comments
-![comments](https://user-images.githubusercontent.com/71921141/218294706-0601545d-85f5-4bdb-a9ac-568c8b8468cb.png)
-
-
-#### Edges
-
-Similarly, edges can also have attributes associated with them but are instead used to describe relationships between vertices. Our graph has four types of edges: “interacted_with”, “posted”, “replied_to”, and “belongs_to”. Here are some images of our edge types/attributes:
-
-posted
-![posted](https://user-images.githubusercontent.com/71921141/218294718-e57f87ea-da7e-496e-8a13-851dd09d6728.png)
-
-interacted_with
-![interacted_with](https://user-images.githubusercontent.com/71921141/218294719-b8dfb1cc-f2c6-4c98-be5d-b44033cbca1f.png)
-
-replied_to
-![replied_to](https://user-images.githubusercontent.com/71921141/218294720-ffba3ae0-3308-42d7-a028-4f72d4b83c38.png)
-
-belongs_to
-![belongs_to](https://user-images.githubusercontent.com/71921141/218294721-1af356af-53c8-4632-84f5-9a922128860b.png) -->
 
 #### Important Usage Notes:
 - Your TigerGraph cluster must be on when calling any of the functions here which use `pyTigerGraph` otherwise a connection will not be able to be established. If you are experiencing connection errors, ensure that the cluster you are using is indeed turned on.
