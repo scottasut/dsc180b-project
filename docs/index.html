@@ -323,7 +323,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             
             This is more indicative of the data we wanted to see. Now, as we move towards larger and larger chains, the average ratio of unique users 
             seems to plataeu at ~0.78 as indicated by Figure 10.<br><br>
-            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+            <figure style = "display:block;margin-left: auto;margin-right: auto;width:30%">
                 <img src="./images/avg_unique_users_chain.png">
                 <figcaption>Fig 10 - Average Ratio of Unique Users in Chains</figcaption>
             </figure><br>
@@ -464,7 +464,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
     <h2 class="heading" style="margin-top:5px"> Results & Evaluation </h2>
         <div class = "blank"><div class = "b">
             The following visual is an example of our model in motion:
-            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+            <figure style = "display:block;margin-left: auto;margin-right: auto">
                 <img src="./images/Dsc180_user_viz.png">
                 <figcaption>A visual example of our Network Statistics Model Results</figcaption>
             </figure><br>
@@ -476,11 +476,11 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             how can we successfully evaluate our  recommender system if there are no truth labels to compare to?<br><br>
 
             After researching several different methods, we decide to use Precision@k as our evaluation metric. Precision@k is the proportion of the recommended items 
-            in the top-k set of recommendations that are relevant.
+            in the top-k set of recommendations that are relevant.<br>
             
             <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                 <img src="./images/precision_equation.PNG">
-            </figure>
+            </figure><br>
             
             We calculate these values by pulling data from 1 year in the future from the training data and examining all the Subreddits the training users 
             interact in that they did not interact in before. Precision quantifies how well the recommendations we make match those true interactions. Our results 
@@ -490,7 +490,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                 <tr>
                     <td>Algorithm</td>
                     <td>Graph-Based?</td>
-                    <td>{@1</td>
+                    <td>@1</td>
                     <td>@3</td>
                     <td>@5</td>
                     <td>@10</td>
@@ -499,40 +499,40 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                 <tr>
                     <td>Popularity Recommender</td>
                     <td>No</td>
-                    <td>0.1000</td>
-                    <td>0.0944</td>
-                    <td>0.0729</td>
-                    <td>0.0475</td>
-                    <td>0.0251</td>
+                    <td>0.100</td>
+                    <td>0.094</td>
+                    <td>0.073</td>
+                    <td>0.048</td>
+                    <td>0.025</td>
                 </tr>
                 <tr>
                     <td>Jaccard Similarity</td>
                     <td>No</td>
-                    <td>0.0250</td>
-                    <td>0.0201</td>
-                    <td>0.0195</td>
-                    <td>0.0204</td>
-                    <td>0.0205</td>
+                    <td>0.025</td>
+                    <td>0.020</td>
+                    <td>0.020</td>
+                    <td>0.020</td>
+                    <td>0.021</td>
                 </tr>
                 <tr>
                     <td>Cosine Similarity KNN</td>
                     <td>No</td>
-                    <td>0.0604</td>
-                    <td>0.0423</td>
-                    <td>0.0372</td>
-                    <td>0.0387</td>
-                    <td>0.0402</td>
+                    <td>0.060</td>
+                    <td>0.042</td>
+                    <td>0.037</td>
+                    <td>0.039</td>
+                    <td>0.040</td>
                 </tr>
                 <tr>
-                    <td>\rowcolor{gray!40}Network Statistics Recommender</td>
+                    <td>Network Statistics Recommender</td>
                     <td>Yes</td>
-                    <td>0.0000</td>
-                    <td>0.0207</td>
-                    <td>0.0338</td>
-                    <td>0.0712</td>
-                    <td>0.0755</td>
+                    <td>0.000</td>
+                    <td>0.021</td>
+                    <td>0.034</td>
+                    <td>0.071</td>
+                    <td>0.075</td>
                 </tr>
-            </table>
+            </table><br>
             
             Table 1 shows our results at different values of k; specifically, when @k is 1, 3, 5, 10, and 25.
 
@@ -542,7 +542,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             Reddit was relatively new and most user interactions were happening in the most popular subreddits. This is why we see such a successful precision@k 
             for our popularity recommender that just recommends the most popular subreddits in the data set that a user is not already part of. 
             
-            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+            <figure style = "display:block;margin-left: auto;margin-right: auto">
                 <img src="./images/precision_recall.png">
                 <figcaption>Precision@k for different k values on all models.</figcaption>
             </figure><br>
