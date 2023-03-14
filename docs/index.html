@@ -163,7 +163,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             This schema consists of two vertex types (Subreddit, User) and 2 edge types (interacted_with, commented_in)<br>
             <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 3 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
         </div></div>
-    <h2 class="heading" style="margin-top:5px;text-align:center"> Exploratory Data Analysis </h2>
+    <h2 class="heading" style="margin-top:5px"> Exploratory Data Analysis </h2>
         <div class = "blank"><div class = "b">
             Once we prepare and load our data, we do some exploratory data analysis to better understand the data we are working with. First, we look into some more
             general statistics like the top 10 largest subreddits with the most unique users:<br>
@@ -338,7 +338,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             
             <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             <h3 class="heading" style="margin-top:5px"> Non-Graph Algorithms </h3>
-                Our non-graph baselines consist of the following three:<br>
+                Our non-graph baselines consist of the following three:<br><br>
                 <div class = "blank"><div class = "b">
                     <div class = "blank"><ol>
                     <li>The K-Nearest Neighbors algorithm we develop uses cosine similarity as the metric, and chooses 20 neighbors. Cosine similarity is a measure
@@ -359,11 +359,11 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                         subscribed to.
                     </li>
                 </ol></div>
-                <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+                <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5.1 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             </div></div>
             <h3 class="heading" style="margin-top:5px"> Centrality Algorithms </h3>
             <div class = "blank"><div class = "b">
-                We then build simple algorithms in TigerGraph to calculate several different centrality-based metrics based on our graph network:<br>
+                We then build simple algorithms in TigerGraph to calculate several different centrality-based metrics based on our graph network:<br><br>
                 <ul>
                     <li>Closeness for Users: a measure of the average farness (inverse distance) to all other user nodes. 
                         Nodes with a high closeness score have the shortest distance to all other nodes. The closeness of a node <i>x</i> is determined by:<br>
@@ -398,11 +398,11 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                         that comment is more likely to receive more connections to other comments.
                     </li><br>
                 </ul>
-                <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+                <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5.2 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             </div></div>
             <h3 class="heading" style="margin-top:5px"> Community Detection Algorithms </h3>
             <div class = "blank"><div class = "b">
-                We then use TigerGraph to build the Louvain algorithm and the Label propagation algorithm, which are two community detection algorithms:<br>
+                We then use TigerGraph to build the Louvain algorithm and the Label propagation algorithm, which are two community detection algorithms:<br><br>
                 <ul>
                     <li>Louvain Algorithm: Louvain is a greedy community detection algorithm that focuses on optimizing modularity, which measures the relative 
                         density of edges inside communities with respect to edges outside communities. By optimizing modularity, Louvain results in the best 
@@ -432,30 +432,143 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                     </li>
                 </ul><br>
                 
-                <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+                <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5.3 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             </div></div>
         </div></div>
     
     <h2 class="heading" style="margin-top:5px"> Final Model </h2>
         <div class = "blank"><div class = "b">
-            Here lies our final model...
-            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+            &nbsp&nbsp&nbsp&nbsp Our final model is a Network Statistics Model. An embedding is created for every user in the graph which consists of a combination of graph based 
+            features and standard machine learning features. For the graph based features, the network statistics model calculates a PageRank, Degree, Louvain, 
+            and Label Propagation score for each user node. These four scores represents how influential a user is, how active a user is based on number of 
+            interactions, what community a user belongs to based on Louvain, and what community a user belongs to based on LPA respectively.<br><br>
+            
+            &nbsp&nbsp&nbsp&nbsp To build the standard machine learning features, we first create a corpus of text for every user using all of the comments that 
+            user has posted. We then find the top 25 most influential words from that corpus by applying TFIDF and picking the top 25 highest scoring words. 
+            Then we use a pre-trained word2vec model which converts each of the 25 keywords into an embedding of length 50. This then gives each user an embedding 
+            of size 25 X 50, representing the keywords that the user is interested in. Combining the graph based features with the standard features results in 
+            each user having an embedding of size 1254. Using this size 1254 embedding, K-Nearest Neighbors is utilized to calculate the two most similar users 
+            to the input user. We then create a pool of possible subreddits to recommend. This pool consists of subreddits that the two neighboring users are 
+            active in that the input user isn't already interacting in. In order to determine what subreddits to recommend from this pool, we use a similar 
+            approach to our standard machine learning feature pipeline. For every subreddit node, we create a corpus which consists of text extracted from 
+            25 randomly picked comments made in that subreddit. We follow the same process as above by picking 25 keywords for each subreddit 
+            using TFIDF scores. Same as above, we apply a pre-trained word2vec model to the keywords to create 25 X 50 size embeddings for each subreddit. 
+            We then train another K-Nearest Neighbors model on the pool of possible subreddits that we created earlier. From there, we iterate through 
+            the subreddits the user has already interacted in and use K-Nearest Neighbors to find the five most similar subreddits from the pool. 
+            These similar subreddits will be the recommendations that we output to the user. If the number of recommendations is greater than the total number 
+            of unique subreddits in the possible recommendation pool, the network statistics model uses the Popular Recommender to fill in those missing 
+            recommendations.<br>
+            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 6 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
         </div></div>
     
     <h2 class="heading" style="margin-top:5px"> Results & Evaluation </h2>
         <div class = "blank"><div class = "b">
-            Here lies our results...
-            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+            The following visual is an example of our model in motion:
+            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                <img src="./images/Dsc180_user_viz.png">
+                <figcaption>A visual example of our Network Statistics Model Results</figcaption>
+            </figure><br>
+            A user "Rightside" has interacted with certain subreddits as shown in the "Interacted With" bubble. When we train our model, we get
+            certain keywords that are represented by the words in the "Commented" bubble. Finally, the "Recommended" bubble shows the recommendations
+            that our model outputs. Subjectively, this result looks great!<br><br>
+            
+            However, we find that we run into a very common problem that many people face when trying to evaluate unsupervised recommender system models: 
+            how can we successfully evaluate our  recommender system if there are no truth labels to compare to?<br><br>
+
+            After researching several different methods, we decide to use Precision@k as our evaluation metric. Precision@k is the proportion of the recommended items 
+            in the top-k set of recommendations that are relevant.
+            
+            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                <img src="./images/precision_equation.PNG">
+            </figure>
+            
+            We calculate these values by pulling data from 1 year in the future from the training data and examining all the Subreddits the training users 
+            interact in that they did not interact in before. Precision quantifies how well the recommendations we make match those true interactions. Our results 
+            are below:
+            
+            <table>
+                <tr>
+                    <td>Algorithm</td>
+                    <td>Graph-Based?</td>
+                    <td>{@1</td>
+                    <td>@3</td>
+                    <td>@5</td>
+                    <td>@10</td>
+                    <td>@25</td>
+                </tr>
+                <tr>
+                    <td>Popularity Recommender</td>
+                    <td>No</td>
+                    <td>0.1000</td>
+                    <td>0.0944</td>
+                    <td>0.0729</td>
+                    <td>0.0475</td>
+                    <td>0.0251</td>
+                </tr>
+                <tr>
+                    <td>Jaccard Similarity</td>
+                    <td>No</td>
+                    <td>0.0250</td>
+                    <td>0.0201</td>
+                    <td>0.0195</td>
+                    <td>0.0204</td>
+                    <td>0.0205</td>
+                </tr>
+                <tr>
+                    <td>Cosine Similarity KNN</td>
+                    <td>No</td>
+                    <td>0.0604</td>
+                    <td>0.0423</td>
+                    <td>0.0372</td>
+                    <td>0.0387</td>
+                    <td>0.0402</td>
+                </tr>
+                <tr>
+                    <td>\rowcolor{gray!40}Network Statistics Recommender</td>
+                    <td>Yes</td>
+                    <td>0.0000</td>
+                    <td>0.0207</td>
+                    <td>0.0338</td>
+                    <td>0.0712</td>
+                    <td>0.0755</td>
+                </tr>
+            </table>
+            
+            Table 1 shows our results at different values of k; specifically, when @k is 1, 3, 5, 10, and 25.
+
+            When @k is 10 and 25, our final model outperforms standard recommendation techniques. However, our model fails to surpass standard models when 
+            @k is 1, 3, or 5. We believe that this under-performance may be due to the bias of users only interacting in the most popular subreddits at the time 
+            and not exploring new and upcoming subreddits based on their personal interests. As we mentioned earlier, our model was trained on data from 2010, when 
+            Reddit was relatively new and most user interactions were happening in the most popular subreddits. This is why we see such a successful precision@k 
+            for our popularity recommender that just recommends the most popular subreddits in the data set that a user is not already part of. 
+            
+            <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
+                <img src="./images/precision_recall.png">
+                <figcaption>Precision@k for different k values on all models.</figcaption>
+            </figure><br>
+            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 7 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
         </div></div>
     
     <h2 class="heading" style="margin-top:5px"> Conclusion </h2>
         <div class = "blank"><div class = "b">
-            Here lies our conclusion...
-            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+            &nbsp&nbsp&nbsp&nbsp Our project showcases the potential of graph-based recommendations, which are a relatively new concept in comparison to decades-old tried-and-true 
+            methods like K-nearest neighbors. However, the ability for graphs to handle complex relationships, as well as increased efficiency in data storage and 
+            computation for graphs creates a huge advantage, and the increased metrics from our final model definitely demonstrate the effectiveness of interaction 
+            graph-based recommendations for Reddit. Our project's emphasizes the importance of adopting newer and advanced techniques to keep up with the evolving 
+            landscape of machine learning and data science. As technology advances, we believe that graph-based recommendations will continue to play a significant 
+            role in shaping future recommendation systems.<br>
+            <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 8 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             <h3 class="heading" style="margin-top:5px"> Future Work/Next Steps </h3>
             <div class = "blank"><div class = "b">
-                This is the Future Work/Next Steps section.
-                <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
+                &nbsp&nbsp&nbsp&nbsp While our project has highlighted the benefits of graph-based recommendations over traditional methods, there are still 
+                many potential applications of these techniques and algorithms that could still be explored. Applications that could be explored in the future 
+                include graph-based and interaction-based recommendation on other social media networks, such as Twitter or Facebook, where potential communities 
+                or topics can be recommended instead. In our project, we used a smaller subset of data from earlier years (before 2011) as otherwise graph sizes 
+                would be too large. For expansions done to this project in particular, we could use a much more recent Reddit dataset from past 2020 in order to 
+                overcome the bias of popular subreddits, as data from earlier days of the website represents a much smaller amount of communities compared to 
+                today's amount. We hypothesize that our model will have greatly improved results when trained on more recent data. We could explore further 
+                algorithms within TigerGraph and keep tuning the hyperparameters for the algorithms to ensure the optimal precision@k.
+                <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 8.1 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             </div></div>
         </div></div>
     <div>&nbsp;</div>
