@@ -84,7 +84,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                 </tr>
             </table><br>
             
-            &nbsp&nbsp&nbsp&nbsp All of the edges in this dataset are undirected, meaning that the relationship between any edge (<div style="font-style:italic">v<sub>i</sub>, v<sub>j</sub></div>)
+            &nbsp&nbsp&nbsp&nbsp All of the edges in this dataset are undirected, meaning that the relationship between any edge (<span style="font-style:italic">v<sub>i</sub>, v<sub>j</sub></span>)
             in the graph is mutual. In total, our graph contains ~172,000 total vertices and ~1,200,000 edges. In a bit more detail, the graph contains 2,929
             unique subreddit vertices, and ~170,000 user vertices along with ~865,000 "interacted_with" edges and ~345,000 "commented_in" edges.<br><br>
 
@@ -328,19 +328,19 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             <h3 class="heading" style="margin-top:5px"> Non-Graph Algorithms </h3>               
                 <div class = "blank"><div class = "b">
                     Our non-graph baselines consist of the following three algorithms:<br><br>
-                    The K-Nearest Neighbors algorithm we develop uses cosine similarity as the metric, and chooses 20 neighbors. Cosine similarity is a measure
+                    The <span style="font-weight:bold">K-Nearest Neighbors</span> algorithm we develop uses cosine similarity as the metric, and chooses 20 neighbors. Cosine similarity is a measure
                         of similarity between two data points in a plane, and in a KNN is used to determine the distance between two points. This can be found 
                         mathematically as follows:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/knn_equation.PNG">
                         </figure><br>
                         where <i>A</i> and <i>B</i> are two vectors of attributes.<br><br>
-                    The recommender system we develop uses Jaccard similarity to recommend subreddits to users. The Jaccard index is used to gauge the similarity 
+                    The recommender system we develop uses <span style="font-weight:bold">Jaccard similarity</span> to recommend subreddits to users. The Jaccard index is used to gauge the similarity 
                         and diversity of sets, and can be determined mathematically as follows:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/jaccard_equation.PNG">
                         </figure><br><br>
-                    A final baseline we tried was a simple popularity predictor model, which recommends users the most popular subreddits that they are not already 
+                    A final baseline we tried was a <span style="font-weight:bold">simple popularity predictor</span> model, which recommends users the most popular subreddits that they are not already 
                         subscribed to.<br>
                 <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5.1 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             </div></div>
@@ -348,14 +348,14 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             <div class = "blank"><div class = "b">
                 We then build simple algorithms in TigerGraph to calculate several different centrality-based metrics based on our graph network:<br><br>
                 
-                Closeness for Users: a measure of the average farness (inverse distance) to all other user nodes. 
+                <span style="font-weight:bold">Closeness for Users:</span> a measure of the average farness (inverse distance) to all other user nodes. 
                         Nodes with a high closeness score have the shortest distance to all other nodes. The closeness of a node <i>x</i> is determined by:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/closeness_user.PNG">
                         </figure><br>
                         where <i>N</i> is the number of nodes in the graph, and <i>d(y,x)</i> is the length of the shortest path between user vertices <i>x</i> 
                         and <i>y</i>. <br><br>
-                Betweenness for Users: This is a measure of the percentage of shortest paths to other users that must go through a specific user node. 
+                <span style="font-weight:bold">Betweenness for Users:</span> This is a measure of the percentage of shortest paths to other users that must go through a specific user node. 
                         A user node with high betweenness is likely to be aware of what is going on in multiple circles. The equation for betweenness of a given 
                         node <i>u</i> is:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
@@ -364,25 +364,25 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                         where &sigma;<sub>v,w</sub> is the total number of shortest paths from node <i>v</i> to node <i>w</i>, and &sigma;<sub>v,w</sub>(<i>u</i>) is the total number of shortest 
                         paths from node <i>v</i> to node <i>w</i> that pass through <i>u</i>.
                     <br><br>
-                Eigenvector for Users: eigenvector centrality is a measure of the influence of a node in a network. A high score means that a node is connected 
+                <span style="font-weight:bold">Eigenvector for Users:</span> eigenvector centrality is a measure of the influence of a node in a network. A high score means that a node is connected 
                         to many nodes who have high scores. For a given graph <i>G</i> := (<i>V, E</i>)$ with |<i>V</i>| vertices, where <i>A</i> = <i>a</i><sub>v,t</sub> is the adjacency matrix 
                         (i.e. <i>a</i><sub>v,t</sub> = 1 if the vertex <i>v</i> is linked to vertex <i>t</i> and 0 otherwise.). We can find the eigenvector centrality using:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/eigenvector_user.PNG">
                         </figure>
                     <br><br>
-                Degree Centrality for Users: The number of edges a user node has. The higher the degree, the more central this user is.</li><br><br>
-                Degree Centrality for Comments: The number of edges a comment node has. The higher the degree, the more central this comment is.</li><br><br>
-                PageRank for Comments: PageRank counts the number and quality of links to a comment to determine how important that comment is, assuming 
+                <span style="font-weight:bold">Degree Centrality for Users:</span> The number of edges a user node has. The higher the degree, the more central this user is.</li><br><br>
+                <span style="font-weight:bold">Degree Centrality for Comments:</span> The number of edges a comment node has. The higher the degree, the more central this comment is.</li><br><br>
+                <span style="font-weight:bold">PageRank for Comments:</span> PageRank counts the number and quality of links to a comment to determine how important that comment is, assuming 
                         that that comment is more likely to receive more connections to other comments.<br><br>
-                PageRank for Users: PageRank counts the number and quality of links to a comment to determine how important that comment is, assuming that 
+                <span style="font-weight:bold">PageRank for Users:</span> PageRank counts the number and quality of links to a comment to determine how important that comment is, assuming that 
                         that comment is more likely to receive more connections to other comments.<br>
                 <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5.2 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             </div></div>
             <h3 class="heading" style="margin-top:5px"> Community Detection Algorithms </h3>
             <div class = "blank"><div class = "b">
                 We then use TigerGraph to build the Louvain algorithm and the Label propagation algorithm, which are two community detection algorithms:<br><br>
-                <div style="font-weight:bold">Louvain Algorithm:</div> Louvain is a greedy community detection algorithm that focuses on optimizing modularity, which measures the relative 
+                <span style="font-weight:bold">Louvain Algorithm:</span> Louvain is a greedy community detection algorithm that focuses on optimizing modularity, which measures the relative 
                         density of edges inside communities with respect to edges outside communities. By optimizing modularity, Louvain results in the best 
                         possible grouping of nodes of a given network. In Louvain, small communities are first found by optimizing modularity locally on all nodes, 
                         then each small community is grouped into one node and the first step is repeated. The value modularity, Q is defined as:<br>
@@ -392,7 +392,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                         where  A<sub>ij</sub> represents the edge weight between nodes i and j, k<sub>i</sub> and k<sub>j</sub> are the sum of the weights of the 
                         edges attached to the nodes i and j, respectively. m is the sum of all the edge weights in the graph, c<sub>i</sub> and c<sub>j</sub> are the 
                         communities of the nodes, and &delta; is the Kronecker delta function (	&delta;(x,y) = 1 if x = y, 0 otherwise)<br><br>
-                Label Propagation Algorithm: The Label Propagation Algorithm (LPA) is a fast algorithm for finding communities in a graph. The LPA works by 
+                <span style="font-weight:bold">Label Propagation Algorithm:</span> The Label Propagation Algorithm (LPA) is a fast algorithm for finding communities in a graph. The LPA works by 
                         propagating labels throughout the network and forming communities based on this process. The intuition behind this algorithm is that a single 
                         label can quickly become dominant in a densely connected group of nodes, but will have trouble crossing a sparsely connected region. 
                         Labels will get trapped inside a densely connected group of nodes, and those nodes that end up with the same label when the algorithms 
