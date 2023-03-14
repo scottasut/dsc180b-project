@@ -338,7 +338,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             
             <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             <h3 class="heading" style="margin-top:5px"> Non-Graph Algorithms </h3>
-                Our non-graph baselines consist of the following three:
+                Our non-graph baselines consist of the following three:<br>
                 <div class = "blank"><div class = "b">
                     <div class = "blank"><ol>
                     <li>The K-Nearest Neighbors algorithm we develop uses cosine similarity as the metric, and chooses 20 neighbors. Cosine similarity is a measure
@@ -372,7 +372,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                         </figure><br>
                         where <i>N</i> is the number of nodes in the graph, and <i>d(y,x)</i> is the length of the shortest path between user vertices <i>x</i> 
                         and <i>y</i>. <br>
-                    </li>
+                    </li><br>
                     <li>Betweenness for Users: This is a measure of the percentage of shortest paths to other users that must go through a specific user node. 
                         A user node with high betweenness is likely to be aware of what is going on in multiple circles. The equation for betweenness of a given 
                         node <i>u</i> is:
@@ -381,7 +381,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                         </figure><br>
                         where &sigma;<sub>v,w</sub> is the total number of shortest paths from node <i>v</i> to node <i>w</i>, and &sigma;<sub>v,w</sub>(<i>u</i>) is the total number of shortest 
                         paths from node <i>v</i> to node <i>w</i> that pass through <i>u</i>.
-                    </li>
+                    </li><br>
                     <li> Eigenvector for Users: eigenvector centrality is a measure of the influence of a node in a network. A high score means that a node is connected 
                         to many nodes who have high scores. For a given graph <i>G</i> := (<i>V, E</i>)$ with |<i>V</i>| vertices, where <i>A</i> = <i>a</i><sub>v,t</sub> is the adjacency matrix 
                         (i.e. <i>a</i><sub>v,t</sub> = 1 if the vertex <i>v</i> is linked to vertex <i>t</i> and 0 otherwise.). We can find the eigenvector centrality using:
@@ -389,20 +389,20 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                             <img src="./images/eigenvector_user.PNG">
                         </figure>
                     </li>
-                    <li> Degree Centrality for Users: The number of edges a user node has. The higher the degree, the more central this user is.</li>
-                    <li> Degree Centrality for Comments: The number of edges a comment node has. The higher the degree, the more central this comment is.</li>
+                    <li> Degree Centrality for Users: The number of edges a user node has. The higher the degree, the more central this user is.</li><br>
+                    <li> Degree Centrality for Comments: The number of edges a comment node has. The higher the degree, the more central this comment is.</li><br>
                     <li> PageRank for Comments: PageRank counts the number and quality of links to a comment to determine how important that comment is, assuming 
                         that that comment is more likely to receive more connections to other comments.
-                    </li>
+                    </li><br>
                     <li> PageRank for Users: PageRank counts the number and quality of links to a comment to determine how important that comment is, assuming that 
                         that comment is more likely to receive more connections to other comments.
-                    </li>
+                    </li><br>
                 </ul>
                 <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             </div></div>
             <h3 class="heading" style="margin-top:5px"> Community Detection Algorithms </h3>
             <div class = "blank"><div class = "b">
-                We then use TigerGraph to build the Louvain algorithm and the Label propagation algorithm, which are two community detection algorithms:
+                We then use TigerGraph to build the Louvain algorithm and the Label propagation algorithm, which are two community detection algorithms:<br>
                 <ul>
                     <li>Louvain Algorithm: Louvain is a greedy community detection algorithm that focuses on optimizing modularity, which measures the relative 
                         density of edges inside communities with respect to edges outside communities. By optimizing modularity, Louvain results in the best 
@@ -414,13 +414,13 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                         where  A<sub>ij</sub> represents the edge weight between nodes i and j, k<sub>i</sub> and k<sub>j</sub> are the sum of the weights of the 
                         edges attached to the nodes i and j, respectively. m is the sum of all the edge weights in the graph, c<sub>i</sub> and c<sub>j</sub> are the 
                         communities of the nodes, and &delta; is the Kronecker delta function (	&delta;(x,y) = 1 if x = y, 0 otherwise)
-                    </li>
+                    </li><br>
                     <li>Label Propagation Algorithm: The Label Propagation Algorithm (LPA) is a fast algorithm for finding communities in a graph. The LPA works by 
                         propagating labels throughout the network and forming communities based on this process. The intuition behind this algorithm is that a single 
                         label can quickly become dominant in a densely connected group of nodes, but will have trouble crossing a sparsely connected region. 
                         Labels will get trapped inside a densely connected group of nodes, and those nodes that end up with the same label when the algorithms 
                         finish can be considered part of the same community. LPA works as follows:
-                        <ul>
+                        <ol>
                             <li>Every node is initialized with a unique community label, an identifier.</li>
                             <li>These labels propagate through the network.</li>
                             <li>At every iteration of propagation, each node updates its label to the one that the maximum number of its neighbors belongs to. 
@@ -428,9 +428,9 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                             </li>
                             <li>LPA reaches convergence when each node has the majority label of its neighbors.</li>
                             <li>LPA stops if either convergence, or the user-defined maximum number of iterations is achieved.</li>
-                        </ul>
+                        </ol>
                     </li>
-                </ul>
+                </ul><br>
                 
                 <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 15 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             </div></div>
