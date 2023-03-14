@@ -84,7 +84,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                 </tr>
             </table><br>
             
-            &nbsp&nbsp&nbsp&nbsp All of the edges in this dataset are undirected, meaning that the relationship between any edge (<p style="font-style:italic">v<sub>i</sub>, v<sub>j</sub></p>)
+            &nbsp&nbsp&nbsp&nbsp All of the edges in this dataset are undirected, meaning that the relationship between any edge (<div style="font-style:italic">v<sub>i</sub>, v<sub>j</sub></div>)
             in the graph is mutual. In total, our graph contains ~172,000 total vertices and ~1,200,000 edges. In a bit more detail, the graph contains 2,929
             unique subreddit vertices, and ~170,000 user vertices along with ~865,000 "interacted_with" edges and ~345,000 "commented_in" edges.<br><br>
 
@@ -382,7 +382,7 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             <h3 class="heading" style="margin-top:5px"> Community Detection Algorithms </h3>
             <div class = "blank"><div class = "b">
                 We then use TigerGraph to build the Louvain algorithm and the Label propagation algorithm, which are two community detection algorithms:<br><br>
-                <p style="font-style:bold">Louvain Algorithm:</p> Louvain is a greedy community detection algorithm that focuses on optimizing modularity, which measures the relative 
+                <div style="font-weight:bold">Louvain Algorithm:</div> Louvain is a greedy community detection algorithm that focuses on optimizing modularity, which measures the relative 
                         density of edges inside communities with respect to edges outside communities. By optimizing modularity, Louvain results in the best 
                         possible grouping of nodes of a given network. In Louvain, small communities are first found by optimizing modularity locally on all nodes, 
                         then each small community is grouped into one node and the first step is repeated. The value modularity, Q is defined as:<br>
