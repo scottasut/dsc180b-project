@@ -72,27 +72,15 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
                 </tr>
                 <tr>
                     <td>Subreddits</td>
-                    <td>All Subreddits in the dataset</td>
-                </tr>
-                <tr>
-                    <td>Subreddits-Comments</td>
-                    <td>All comments and the subreddit they were made in</td>
+                    <td>All Subreddits in the dataset and their keyword embeddings</td>
                 </tr>
                 <tr>
                     <td>Users</td>
-                    <td>All users in the dataset</td>
+                    <td>All users in the dataset and their keyword embeddings</td>
                 </tr>
                 <tr>
-                    <td>Users-Comments</td>
-                    <td>Comments and users who made the comments</td>
-                </tr>
-                <tr>
-                    <td>Comments</td>
-                    <td>All comments in the dataset</td>
-                </tr>
-                <tr>
-                    <td>Comments-Comments</td>
-                    <td>Comments that are connected in a comment chain</td>
+                    <td>Users-Subreddits</td>
+                    <td>Connects users to subreddits they have commented in.</td>
                 </tr>
             </table><br>
             
@@ -337,28 +325,23 @@ title: <span style="color:#ff4500">Interaction Graph-based Reddit Community Reco
             These baselines are not necessarily graph-based, but they help us to set and measure the baseline to then build upon for our final model.<br>
             
             <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
-            <h3 class="heading" style="margin-top:5px"> Non-Graph Algorithms </h3>
-                Our non-graph baselines consist of the following three:<br><br>
+            <h3 class="heading" style="margin-top:5px"> Non-Graph Algorithms </h3>               
                 <div class = "blank"><div class = "b">
-                    <div class = "blank"><ol>
-                    <li>The K-Nearest Neighbors algorithm we develop uses cosine similarity as the metric, and chooses 20 neighbors. Cosine similarity is a measure
+                    Our non-graph baselines consist of the following three algorithms:<br><br>
+                    The K-Nearest Neighbors algorithm we develop uses cosine similarity as the metric, and chooses 20 neighbors. Cosine similarity is a measure
                         of similarity between two data points in a plane, and in a KNN is used to determine the distance between two points. This can be found 
                         mathematically as follows:<br>
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/knn_equation.PNG">
                         </figure><br>
                         where <i>A</i> and <i>B</i> are two vectors of attributes.
-                    </li>
-                    <li> The recommender system we develop uses Jaccard similarity to recommend subreddits to users. The Jaccard index is used to gauge the similarity 
+                    The recommender system we develop uses Jaccard similarity to recommend subreddits to users. The Jaccard index is used to gauge the similarity 
                         and diversity of sets, and can be determined mathematically as follows:
                         <figure style = "display:block;margin-left: auto;margin-right: auto;width:50%">
                             <img src="./images/jaccard_equation.PNG">
                         </figure><br>
-                    </li>
-                    <li> A final baseline we tried was a simple popularity predictor model, which recommends users the most popular subreddits that they are not already 
+                    A final baseline we tried was a simple popularity predictor model, which recommends users the most popular subreddits that they are not already 
                         subscribed to.
-                    </li>
-                </ol></div>
                 <div><img src="./images/up_arrow-removebg-preview.png" style="width:30px;height:30px;position:relative;top:10px" /> 5.1 <img src="./images/down_arrow-removebg-preview.png " style="width:30px;height:30px;position:relative;top:10px"/></div>
             </div></div>
             <h3 class="heading" style="margin-top:5px"> Centrality Algorithms </h3>
